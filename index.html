@@ -1186,7 +1186,7 @@
                         <h2 style={{ fontSize: '18px', margin: 0 }}><i className="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> FluentPath</h2>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                             <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
-                            <i className="fa-regular fa-circle-user" style={{ fontSize: '24px', color: 'var(--text-muted)' }}></i>
+                            <i className="fa-regular fa-circle-user" style={{ fontSize: '24px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setCurrentView('profile')}></i>
                         </div>
                     </div>
 
