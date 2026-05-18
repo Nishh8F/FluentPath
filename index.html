@@ -1706,7 +1706,34 @@
                                 </div>
                             </div>
                             <h2 style={{ margin: '0 0 4px 0', fontSize: '22px', color: 'var(--text-dark)', fontWeight: '700' }}>{currentUser?.name || currentUser?.username}</h2>
-                            <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '13px', fontWeight: '500' }}>Global Explorer • Level 14</p>
+                            {(() => {
+                                const xp = currentUser?.total_xp || 0;
+                                const level = Math.floor(xp / 100) + 1;
+                                const titles = [
+                                    'Wanderer',        // Lv 1-4
+                                    'Apprentice',      // Lv 5-9
+                                    'Explorer',        // Lv 10-19
+                                    'Adventurer',      // Lv 20-29
+                                    'Scholar',         // Lv 30-49
+                                    'Global Citizen',  // Lv 50-74
+                                    'Linguist',        // Lv 75-99
+                                    'Polyglot Master'  // Lv 100+
+                                ];
+                                const title =
+                                    level >= 100 ? titles[7] :
+                                    level >= 75  ? titles[6] :
+                                    level >= 50  ? titles[5] :
+                                    level >= 30  ? titles[4] :
+                                    level >= 20  ? titles[3] :
+                                    level >= 10  ? titles[2] :
+                                    level >= 5   ? titles[1] :
+                                    titles[0];
+                                return (
+                                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '13px', fontWeight: '500' }}>
+                                        {title} • Level {level}
+                                    </p>
+                                );
+                            })()}
                         </div>
 
                         {/* Stats Grid */}
