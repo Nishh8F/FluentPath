@@ -298,6 +298,57 @@ try {
         exit;
     }
 
+    if ($action === 'get_leaderboard') {
+        // Fetch top 50 users ranked by total_xp
+        $stmt = $conn->prepare("
+            SELECT id, username, name, profile_picture, total_xp, lessons_done, current_streak
+            FROM users
+            ORDER BY total_xp DESC, lessons_done DESC
+            LIMIT 50
+        ");
+        $stmt->execute();
+        $topUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $currentUserRank = null;
+        $currentUserData = null;
+
+        if (isset($_SESSION['user_id'])) {
+            $userId = $_SESSION['user_id'];
+
+            // Count how many users rank above the current user
+            $rankStmt = $conn->prepare("
+                SELECT COUNT(*) + 1 AS user_rank
+                FROM users
+                WHERE total_xp > (SELECT total_xp FROM users WHERE id = ?)
+            ");
+            $rankStmt->execute([$userId]);
+            $currentUserRank = (int)$rankStmt->fetchColumn();
+
+            // Check if current user is already in the top list
+            $inTop = false;
+            foreach ($topUsers as $u) {
+                if ((int)$u['id'] === $userId) {
+                    $inTop = true;
+                    break;
+                }
+            }
+
+            // Fetch current user's own data for rank banner
+            $selfStmt = $conn->prepare("SELECT id, username, name, profile_picture, total_xp, lessons_done, current_streak FROM users WHERE id = ?");
+            $selfStmt->execute([$userId]);
+            $currentUserData = $selfStmt->fetch(PDO::FETCH_ASSOC);
+            $currentUserData['rank'] = $currentUserRank;
+        }
+
+        echo json_encode([
+            "success" => true,
+            "top_users" => $topUsers,
+            "current_user_rank" => $currentUserRank,
+            "current_user_data" => $currentUserData
+        ]);
+        exit;
+    }
+
     echo json_encode(["error" => "Invalid action."]);
 
 } catch(PDOException $e) {
