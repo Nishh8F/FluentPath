@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FluentPath UI</title>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0B4D3C;
+            --primary-light: #E6F0ED;
+            --bg-color: #F8F9FA;
+            --card-bg: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
+            --success: #10B981;
+            --error: #EF4444;
+            --overlay-bg: rgba(248, 249, 250, 1);
+            --overlay-bg-transparent: rgba(248, 249, 250, 0);
+            --welcome-bg-1: rgba(230,240,237,0.8);
+            --welcome-bg-2: rgba(255,255,255,1);
+            --badge-bg: rgba(230, 240, 237, 0.85);
+            --shadow: rgba(0,0,0,0.1);
+            --btn-text: #FFFFFF;
+        }
+
+        [data-theme='dark'] {
+            --primary: #4ADE80;
+            --primary-light: #064E3B;
+            --bg-color: #111827;
+            --card-bg: #1F2937;
+            --text-dark: #F9FAFB;
+            --text-muted: #9CA3AF;
+            --border-color: #374151;
+            --success: #10B981;
+            --error: #F87171;
+            --overlay-bg: rgba(17, 24, 39, 1);
+            --overlay-bg-transparent: rgba(17, 24, 39, 0);
+            --welcome-bg-1: rgba(17, 24, 39, 0.9);
+            --welcome-bg-2: rgba(17, 24, 39, 1);
+            --badge-bg: rgba(31, 41, 55, 0.85);
+            --shadow: rgba(0,0,0,0.5);
+            --btn-text: #111827;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* Mobile Container Simulation */
+        #root {
+            width: 100%;
+            max-width: 414px;
+            height: 100%;
+            background-color: var(--bg-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .screen {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            padding-bottom: 80px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3 {
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        p {
+            margin: 0;
+            color: var(--text-muted);
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 24px 0 12px 0;
+            color: var(--text-dark);
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: var(--primary);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 24px;
+            padding: 16px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-align: center;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        /* Language List Cards */
+        .lang-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .lang-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            margin-right: 16px;
+        }
+
+        .lang-info {
+            flex: 1;
+        }
+
+        .lang-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+
+        .lang-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .lang-arrow {
+            color: var(--border-color);
+        }
+
+        /* Dashboard specific */
+        .streak-card {
+            background: var(--primary);
+            border-radius: 16px;
+            padding: 24px;
+            color: var(--btn-text);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .streak-card h2 {
+            color: var(--btn-text);
+            font-size: 32px;
+            margin-bottom: 4px;
+        }
+
+        .streak-card p {
+            color: var(--btn-text);
+            opacity: 0.8;
+        }
+
+        /* Lesson specific */
+        .progress-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .lesson-word {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 40px 0;
+            padding: 40px 20px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .choice-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .choice-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .choice-num {
+            background: var(--border-color);
+            color: var(--text-muted);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .choice-btn.selected .choice-num {
+            background: var(--primary);
+            color: var(--btn-text);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 16px 0;
+            padding-bottom: env(safe-area-inset-bottom, 16px);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 10px;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        /* Toast Component */
+        .toast-container {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 16px var(--shadow);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: none;
+            text-align: center;
+        }
+        .toast-container.show {
+            opacity: 1;
+            top: 24px;
+        }
+        .toast-success { background: var(--success); color: white; }
+        .toast-error { background: var(--error); color: white; }
+        .toast-info { background: var(--primary); color: var(--btn-text); }
+
+        /* Auth Screens */
+        .auth-screen {
+            padding: 0;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .auth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 24px 16px 24px;
+        }
+        .auth-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F4C5C;
+        }
+        .hero-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            position: relative;
+        }
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(to top, var(--overlay-bg), var(--overlay-bg-transparent));
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 0 24px;
+        }
+        .auth-form-container {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .input-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #4B5563;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            color: #9CA3AF;
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 16px 16px 16px 44px;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            font-size: 14px;
+            background: var(--card-bg);
+            box-sizing: border-box;
+            color: var(--text-dark);
+        }
+        .auth-input:focus {
+            outline: none;
+            border-color: #0F4C5C;
+        }
+        .eye-icon {
+            position: absolute;
+            right: 16px;
+            color: #9CA3AF;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .forgot-pass {
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-size: 11px;
+            color: #0F4C5C;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .auth-btn {
+            background-color: var(--primary);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s;
+        }
+        .auth-footer {
+            padding: 24px;
+            text-align: center;
+        }
+        .auth-footer-text {
+            font-size: 13px;
+            color: #6B7280;
+            margin-bottom: 24px;
+        }
+        .auth-footer-text span {
+            color: #0F4C5C;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .legal-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            font-size: 10px;
+            color: #6B7280;
+        }
+        .strength-bars {
+            display: flex;
+            gap: 4px;
+            margin-top: 12px;
+        }
+        .s-bar {
+            height: 3px;
+            flex: 1;
+            border-radius: 2px;
+            background: #E5E7EB;
+        }
+        .s-bar.active {
+            background: #10B981;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 24px 0;
+            color: #9CA3AF;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .divider:not(:empty)::before { margin-right: 12px; }
+        .divider:not(:empty)::after { margin-left: 12px; }
+
+        /* Welcome Screen */
+        .welcome-screen-bg {
+            background: linear-gradient(180deg, var(--welcome-bg-1) 0%, var(--welcome-bg-2) 50%, var(--welcome-bg-2) 100%);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow-y: auto;
+        }
+        .welcome-header {
+            text-align: center;
+            padding: 40px 24px 20px 24px;
+        }
+        .welcome-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F4C5C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .welcome-image-container {
+            position: relative;
+            margin: 20px auto;
+            width: 280px;
+            height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .welcome-hero-img {
+            width: 240px;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 40px;
+            box-shadow: 0 16px 32px var(--shadow);
+            position: relative;
+            z-index: 2;
+            border: 4px solid var(--card-bg);
+        }
+        .welcome-badge-1 {
+            position: absolute;
+            top: 0;
+            right: 0px;
+            background: var(--badge-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+        .welcome-badge-2 {
+            position: absolute;
+            bottom: 20px;
+            left: 0px;
+            background: var(--primary);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--btn-text);
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+        .welcome-content {
+            padding: 24px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        .welcome-title span {
+            color: var(--primary);
+        }
+        .welcome-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 32px;
+            padding: 0 16px;
+        }
+        .welcome-btn {
+            background-color: var(--primary);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 12px;
+            padding: 18px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+        .welcome-login-link {
+            font-size: 11px;
+            color: #4B5563;
+            margin-top: 16px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [currentView, setCurrentView] = useState('welcome'); // welcome, select, dashboard, lesson, login, register
+            const [selectedLang, setSelectedLang] = useState(null);
+            const [currentUser, setCurrentUser] = useState(null);
+            const [authChecking, setAuthChecking] = useState(true);
+            const [theme, setTheme] = useState(() => {
+                const saved = localStorage.getItem('fluentpath_theme');
+                if (saved) return saved;
+                return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            });
+            const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
+
+            const showToast = (message, type = 'info') => {
+                setToast({ show: true, message, type });
+                setTimeout(() => {
+                    setToast(prev => ({ ...prev, show: false }));
+                }, 3000);
+            };
+
+            useEffect(() => {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('fluentpath_theme', theme);
+            }, [theme]);
+
+            useEffect(() => {
+                fetch('auth.php?action=check')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            setCurrentUser(data.user);
+                            setCurrentView('dashboard');
+                        }
+                        setAuthChecking(false);
+                    })
+                    .catch(() => setAuthChecking(false));
+            }, []);
+
+            // --- Screen Components ---
+
+            const WelcomeScreen = () => (
+                <div className="welcome-screen-bg">
+                    <div className="welcome-header">
+                        <div className="welcome-logo">
+                            <i className="fa-solid fa-earth-asia"></i> FluentPath
+                        </div>
+                    </div>
+                    
+                    <div className="welcome-image-container">
+                        <div className="welcome-badge-1">
+                            <i className="fa-regular fa-heart"></i> Terima Kasih!
+                        </div>
+                        <img src="uploads/welcome_hero.png" alt="Cafe Conversation" className="welcome-hero-img" onError={(e) => { e.target.style.display = 'none' }} />
+                        <div className="welcome-badge-2">
+                            <i className="fa-solid fa-language"></i> Hello
+                        </div>
+                    </div>
+
+                    <div className="welcome-content">
+                        <h1 className="welcome-title">Bridge Your <span>World</span></h1>
+                        <p className="welcome-subtitle">Learn local Malaysian dialects and international languages with ease.</p>
+                        
+                        <div style={{ marginTop: 'auto' }}>
+                            <button className="welcome-btn" onClick={() => setCurrentView('register')}>
+                                Get Started <i className="fa-solid fa-arrow-right"></i>
+                            </button>
+                            <div className="welcome-login-link" onClick={() => setCurrentView('login')}>
+                                I already have an account
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const LoginScreen = () => {
+                const [username, setUsername] = useState('');
+                const [password, setPassword] = useState('');
+                const [error, setError] = useState('');
+                const [showPassword, setShowPassword] = useState(false);
+
+                const handleLogin = async (e) => {
+                    e.preventDefault();
+                    setError('');
+                    const formData = new FormData();
+                    formData.append('username', username);
+                    formData.append('password', password);
+
+                    try {
+                        const res = await fetch('auth.php?action=login', { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data.success) {
+                            setCurrentUser(data.user);
+                            setCurrentView('dashboard');
+                        } else {
+                            setError(data.error);
+                        }
+                    } catch (err) {
+                        setError('Connection failed.');
+                    }
+                };
+
+                return (
+                    <div className="auth-screen">
+                        <div className="auth-header">
+                            <div className="auth-logo">FluentPath</div>
+                            <i className="fa-regular fa-circle-question" style={{ color: '#4B5563', fontSize: '18px' }}></i>
+                        </div>
+                        
+                        <div style={{ position: 'relative' }}>
+                            <img src="uploads/login_hero.png" alt="Succulents" className="hero-img" onError={(e) => { e.target.style.display = 'none' }} />
+                            <div className="hero-overlay">
+                                <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#1F2937', marginBottom: '4px' }}>Welcome back</h1>
+                                <p style={{ fontSize: '13px', color: '#4B5563' }}>Continue your global journey</p>
+                            </div>
+                        </div>
+
+                        <div className="auth-form-container">
+                            {error && <div style={{ color: '#DC2626', background: '#FEE2E2', padding: '12px', borderRadius: '8px', textAlign: 'center', marginBottom: '16px', fontSize: '13px', fontWeight: '600' }}>{error}</div>}
+                            
+                            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                <div className="input-group">
+                                    <label className="input-label">Email or Username</label>
+                                    <div className="input-wrapper">
+                                        <i className="fa-regular fa-envelope input-icon"></i>
+                                        <input 
+                                            type="text" 
+                                            className="auth-input" 
+                                            placeholder="amy@example.com" 
+                                            required 
+                                            value={username} 
+                                            onChange={e => setUsername(e.target.value.replace(/\s/g, ''))} 
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="input-group">
+                                    <label className="input-label">Password</label>
+                                    <span className="forgot-pass">Forgot Password?</span>
+                                    <div className="input-wrapper">
+                                        <i className="fa-solid fa-lock input-icon"></i>
+                                        <input 
+                                            type={showPassword ? "text" : "password"} 
+                                            className="auth-input" 
+                                            placeholder="••••••••" 
+                                            required 
+                                            value={password} 
+                                            onChange={e => setPassword(e.target.value)} 
+                                        />
+                                        <i className={`fa-regular ${showPassword ? 'fa-eye-slash' : 'fa-eye'} eye-icon`} onClick={() => setShowPassword(!showPassword)}></i>
+                                    </div>
+                                </div>
+
+                                <button type="submit" className="auth-btn">Sign In</button>
+
+                                <div style={{ marginTop: 'auto' }}>
+                                    <div className="auth-footer-text" style={{ textAlign: 'center' }}>
+                                        Don't have an account? <span onClick={() => setCurrentView('register')}>Sign up</span>
+                                    </div>
+                                    <div style={{ textAlign: 'center', fontSize: '10px', color: '#9CA3AF', marginBottom: '16px' }}>
+                                        © 2024 FluentPath. Bridging cultures through communication.
+                                    </div>
+                                    <div className="legal-links">
+                                        <span>Privacy</span>
+                                        <span>Terms</span>
+                                        <span>Support</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                );
+            };
+
+            const RegisterScreen = () => {
+                const [username, setUsername] = useState('');
+                const [name, setName] = useState('');
+                const [password, setPassword] = useState('');
+                const [error, setError] = useState('');
+                const [showPassword, setShowPassword] = useState(false);
+
+                const handleRegister = async (e) => {
+                    e.preventDefault();
+                    setError('');
+                    const formData = new FormData();
+                    formData.append('username', username);
+                    formData.append('name', name);
+                    formData.append('password', password);
+
+                    try {
+                        const res = await fetch('auth.php?action=register', { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data.success) {
+                            setCurrentUser(data.user);
+                            setCurrentView('dashboard');
+                        } else {
+                            setError(data.error);
+                        }
+                    } catch (err) {
+                        setError('Connection failed.');
+                    }
+                };
+
+                return (
+                    <div className="auth-screen">
+                        <div className="auth-header" style={{ paddingBottom: '32px' }}>
+                            <div style={{ display: 'flex', gap: '16px', marginLeft: 'auto' }}>
+                                <i className="fa-regular fa-star" style={{ color: '#4B5563', fontSize: '18px' }}></i>
+                                <i className="fa-regular fa-thumbs-up" style={{ color: '#4B5563', fontSize: '18px' }}></i>
+                                <i className="fa-regular fa-thumbs-down" style={{ color: '#4B5563', fontSize: '18px' }}></i>
+                            </div>
+                        </div>
+
+                        <div className="auth-form-container" style={{ paddingTop: 0 }}>
+                            <div style={{ marginBottom: '32px' }}>
+                                <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#1F2937', marginBottom: '4px' }}>Start your journey</h1>
+                                <p style={{ fontSize: '13px', color: '#4B5563', lineHeight: '1.4' }}>Connect with your heritage or explore the world.</p>
+                            </div>
+
+                            {error && <div style={{ color: '#DC2626', background: '#FEE2E2', padding: '12px', borderRadius: '8px', textAlign: 'center', marginBottom: '16px', fontSize: '13px', fontWeight: '600' }}>{error}</div>}
+                            
+                            <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                <div className="input-group">
+                                    <label className="input-label">Full Name</label>
+                                    <div className="input-wrapper">
+                                        <i className="fa-regular fa-user input-icon"></i>
+                                        <input 
+                                            type="text" 
+                                            className="auth-input" 
+                                            placeholder="John Doe" 
+                                            required 
+                                            value={name} 
+                                            onChange={e => setName(e.target.value)} 
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="input-group">
+                                    <label className="input-label">Email Address (Username)</label>
+                                    <div className="input-wrapper">
+                                        <i className="fa-regular fa-envelope input-icon"></i>
+                                        <input 
+                                            type="text" 
+                                            className="auth-input" 
+                                            placeholder="hello@example.com" 
+                                            required 
+                                            value={username} 
+                                            onChange={e => setUsername(e.target.value.replace(/\s/g, ''))} 
+                                        />
+                                    </div>
+                                    <div style={{ fontSize: '10px', color: '#10B981', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <i className="fa-solid fa-circle-check"></i> Valid professional format
+                                    </div>
+                                </div>
+
+                                <div className="input-group" style={{ marginBottom: '32px' }}>
+                                    <label className="input-label">Password</label>
+                                    <div className="input-wrapper">
+                                        <i className="fa-solid fa-lock input-icon"></i>
+                                        <input 
+                                            type={showPassword ? "text" : "password"} 
+                                            className="auth-input" 
+                                            placeholder="••••••••" 
+                                            required 
+                                            value={password} 
+                                            onChange={e => setPassword(e.target.value)} 
+                                        />
+                                        <i className={`fa-regular ${showPassword ? 'fa-eye-slash' : 'fa-eye'} eye-icon`} onClick={() => setShowPassword(!showPassword)}></i>
+                                    </div>
+                                    <div className="strength-bars">
+                                        <div className="s-bar active"></div>
+                                        <div className="s-bar active"></div>
+                                        <div className="s-bar"></div>
+                                        <div className="s-bar"></div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" className="auth-btn">Create Account</button>
+
+                                <div style={{ marginTop: 'auto' }}>
+                                    <div className="auth-footer-text" style={{ textAlign: 'center' }}>
+                                        Already have an account? <span onClick={() => setCurrentView('login')}>Log in</span>
+                                    </div>
+                                    <div style={{ textAlign: 'center', fontSize: '16px', color: '#0F4C5C', fontWeight: 'bold', marginBottom: '8px', opacity: 0.2 }}>
+                                        FluentPath <span style={{ fontSize: '10px', fontWeight: 'normal', color: '#9CA3AF', marginLeft: '8px' }}>© 2024 FluentPath Inc.</span>
+                                    </div>
+                                    <div className="legal-links">
+                                        <span>Privacy</span>
+                                        <span>Terms</span>
+                                        <span>Accessibility</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                );
+            };
+
+            const SelectLanguageScreen = () => (
+                <div className="screen">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <h2 style={{ fontSize: '20px', margin: 0 }}>
+                            <i className="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> FluentPath
+                        </h2>
+                        <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
+                    </div>
+
+                    <div style={{ background: 'var(--card-bg)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '24px', display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}>
+                        <i className="fa-solid fa-search" style={{ marginRight: '12px' }}></i>
+                        Search languages or dialects...
+                    </div>
+
+                    <h3 className="section-header"><i className="fa-solid fa-location-dot"></i> Local Dialects</h3>
+                    {[
+                        {
+                            id: 'kelantan', title: 'Bahasa Melayu', sub: 'Kelantan (Kecek Kelate)',
+                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="300" height="150" fill="#DA251D" /><path d="M 150 75 A 30 30 0 1 1 180 45 A 35 35 0 1 0 165 105 Z" fill="white" /><polygon points="160,50 180,90 140,70 180,60 150,90" fill="white" /></svg>
+                        },
+                        {
+                            id: 'terengganu', title: 'Bahasa Melayu', sub: 'Terengganu (Ganu)',
+                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="300" height="150" fill="#ffffff" /><rect x="30" y="20" width="240" height="110" fill="#000000" /><path d="M 150 75 A 25 25 0 1 1 175 50 A 30 30 0 1 0 160 100 Z" fill="white" /></svg>
+                        },
+                        {
+                            id: 'perak', title: 'Bahasa Melayu', sub: 'Perak (Loghat Perak)',
+                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px', border: '1px solid #E5E7EB' }}><rect width="300" height="50" fill="#ffffff" /><rect y="50" width="300" height="50" fill="#fcd34d" /><rect y="100" width="300" height="50" fill="#000000" /></svg>
+                        },
+                        {
+                            id: 'selangor', title: 'Bahasa Melayu', sub: 'Selangor/KL (Standard Urban)',
+                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="150" height="75" fill="#DA251D" /><rect x="150" width="150" height="75" fill="#fcd34d" /><rect y="75" width="150" height="75" fill="#fcd34d" /><rect x="150" y="75" width="150" height="75" fill="#DA251D" /><path d="M 80 37.5 A 15 15 0 1 1 100 22.5 A 18 18 0 1 0 90 55 Z" fill="white" /></svg>
+                        },
+                        {
+                            id: 'utara', title: 'Bahasa Melayu', sub: 'Utara (Loghat Utara)',
+                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="300" height="150" fill="#DA251D" /><circle cx="60" cy="40" r="25" fill="#fcd34d" /><path d="M 60 40 A 20 20 0 1 1 80 20 A 25 25 0 1 0 70 60 Z" fill="#228b22" /></svg>
+                        }
+                    ].map(lang => (
+                        <div key={lang.id} className="lang-card" onClick={() => { setSelectedLang(lang); setCurrentView('dashboard'); }}>
+                            <div className="lang-icon">{lang.icon}</div>
+                            <div className="lang-info">
+                                <div className="lang-title">{lang.title}</div>
+                                <div className="lang-sub">{lang.sub}</div>
+                            </div>
+                            <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                        </div>
+                    ))}
+
+                    <h3 className="section-header"><i className="fa-solid fa-globe"></i> International</h3>
+                    {[
+                        {
+                            id: 'english', title: 'English', sub: 'Global Communication',
+                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px', overflow: 'hidden' }}><rect width="300" height="150" fill="#012169" /><path d="M 0 0 L 300 150 M 0 150 L 300 0" stroke="white" strokeWidth="30" /><path d="M 0 0 L 300 150 M 0 150 L 300 0" stroke="#C8102E" strokeWidth="15" /><rect x="130" y="0" width="40" height="150" fill="white" /><rect x="0" y="55" width="300" height="40" fill="white" /><rect x="138" y="0" width="24" height="150" fill="#C8102E" /><rect x="0" y="63" width="300" height="24" fill="#C8102E" /></svg>
+                        },
+                        {
+                            id: 'russian', title: 'Russian', sub: 'Русский язык',
+                            icon: <svg viewBox="0 0 300 200" style={{ width: '100%', height: '100%', borderRadius: '8px', overflow: 'hidden' }}><rect width="300" height="200" fill="#000000" /><rect y="65" width="300" height="70" fill="#FACC15" /><polygon points="150,20 190,50 180,60 210,110 180,160 160,160 160,170 140,170 140,160 120,160 90,110 120,60 110,50" fill="#000000" stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" /><polygon points="150,35 153,45 163,45 155,51 158,61 150,55 142,61 145,51 137,45 147,45" fill="#ffffff" /><circle cx="138" cy="85" r="7" fill="#ffffff" /><polygon points="135,82 122,85 132,90" fill="#ffffff" /><circle cx="162" cy="85" r="7" fill="#ffffff" /><polygon points="165,82 178,85 168,90" fill="#ffffff" /><path d="M 138 90 L 150 100 L 162 90 L 165 115 L 135 115 Z" fill="#ffffff" /><path d="M 140 110 L 160 110 L 155 130 L 145 130 Z" fill="#ffffff" /><path d="M 135 95 C 110 85 100 115 100 125 C 115 120 125 110 135 110 Z" fill="#ffffff" /><path d="M 135 105 C 115 100 105 120 105 130 C 120 125 130 115 135 115 Z" fill="#ffffff" /><path d="M 165 95 C 190 85 200 115 200 125 C 185 120 175 110 165 110 Z" fill="#ffffff" /><path d="M 165 105 C 185 100 195 120 195 130 C 180 125 170 115 165 115 Z" fill="#ffffff" /><path d="M 145 130 L 155 130 L 160 145 L 155 140 L 150 150 L 145 140 L 140 145 Z" fill="#ffffff" /><rect x="135" y="125" width="4" height="15" fill="#ffffff" /><rect x="161" y="125" width="4" height="15" fill="#ffffff" /><path d="M 137 140 L 128 145 L 137 142 Z" fill="#ffffff" /><path d="M 163 140 L 172 145 L 163 142 Z" fill="#ffffff" /></svg>
+                        }
+                    ].map(lang => (
+                        <div key={lang.id} className="lang-card" onClick={() => { setSelectedLang(lang); setCurrentView('dashboard'); }}>
+                            <div className="lang-icon">{lang.icon}</div>
+                            <div className="lang-info">
+                                <div className="lang-title">{lang.title}</div>
+                                <div className="lang-sub">{lang.sub}</div>
+                            </div>
+                            <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                        </div>
+                    ))}
+                </div>
+            );
+
+            const DashboardScreen = () => {
+                const currentProgress = currentUser?.progress?.[selectedLang?.id] || 0;
+                let masteryLevel = "Beginner Mastery";
+                if (currentProgress > 30 && currentProgress <= 70) masteryLevel = "Intermediate Mastery";
+                if (currentProgress > 70) masteryLevel = "Advanced Mastery";
+
+                return (
+                <div className="screen">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                        <h2 style={{ fontSize: '18px', margin: 0 }}><i className="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> FluentPath</h2>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
+                            <i className="fa-regular fa-circle-user" style={{ fontSize: '24px', color: 'var(--text-muted)' }}></i>
+                        </div>
+                    </div>
+
+                    <div style={{ background: 'var(--card-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '16px' }}>
+                        <p style={{ fontSize: '12px', color: 'var(--success)', fontWeight: '600', marginBottom: '4px' }}>ACTIVE DIALECT</p>
+                        <h3 style={{ margin: '0 0 4px 0' }}>{selectedLang ? `${selectedLang.title} - ${selectedLang.sub}` : 'Select a language'}</h3>
+                        <p style={{ fontSize: '12px', marginBottom: '12px' }}>{masteryLevel} • {currentProgress}% Complete</p>
+                        <div className="progress-bar" style={{ height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div className="progress-fill" style={{ width: `${currentProgress}%`, height: '100%', background: 'var(--success)', borderRadius: '4px' }}></div>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+                        <div className="streak-card" style={{ flex: 1, margin: 0 }}>
+                            <i className="fa-solid fa-fire" style={{ fontSize: '24px', color: '#FCD34D', marginBottom: '8px' }}></i>
+                            <h2>14</h2>
+                            <p style={{ fontSize: '14px' }}>Day Streak</p>
+                        </div>
+                        <div
+                            style={{ flex: 1, background: 'linear-gradient(135deg, #FFD700 0%, #F5A623 100%)', borderRadius: '16px', padding: '24px', color: 'white', textAlign: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', boxShadow: '0 4px 15px rgba(245, 166, 35, 0.3)' }}
+                            onClick={() => setCurrentView('reward')}
+                        >
+                            <i className="fa-solid fa-gift" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
+                            <h3 style={{ margin: 0, fontSize: '16px', color: 'white' }}>Daily Reward</h3>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h3 className="section-header" style={{ margin: '0' }}>Continue Learning</h3>
+                        <span style={{ fontSize: '12px', color: 'var(--primary)', cursor: 'pointer' }} onClick={() => setCurrentView('select')}>View all &gt;</span>
+                    </div>
+
+                    <div style={{ background: 'var(--card-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div style={{ width: '40px', height: '40px', background: 'var(--primary-light)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                                <i className="fa-solid fa-book-open"></i>
+                            </div>
+                            <div>
+                                <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-dark)' }}>Lesson 1: Basics</h4>
+                                <p style={{ fontSize: '12px', margin: 0, color: 'var(--text-muted)' }}>Learn fundamental phrases.</p>
+                            </div>
+                        </div>
+                        <button
+                            style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '16px', fontWeight: '600', cursor: 'pointer' }}
+                            onClick={() => {
+                                if (selectedLang) setCurrentView('lesson');
+                                else showToast("Please select a language first!", "error");
+                            }}
+                        >
+                            Resume
+                        </button>
+                    </div>
+                </div>
+                );
+            };
+
+            const LessonScreen = () => {
+                const [lessonData, setLessonData] = useState([]);
+                const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+                const [selectedAnswer, setSelectedAnswer] = useState(null);
+                const [loading, setLoading] = useState(true);
+                const [isCorrect, setIsCorrect] = useState(null);
+                const [lives, setLives] = useState(5);
+                const [gameOver, setGameOver] = useState(false);
+                const [shake, setShake] = useState(false);
+
+                useEffect(() => {
+                    const fetchLessons = async () => {
+                        try {
+                            const response = await fetch(`api.php?lang=${selectedLang.id}`);
+                            const data = await response.json();
+
+                            if (data && data.length > 0 && !data.error) {
+                                setLessonData(data);
+                            }
+                        } catch (error) {
+                            console.error("Failed to fetch lessons:", error);
+                        } finally {
+                            setLoading(false);
+                        }
+                    };
+
+                    if (selectedLang) {
+                        fetchLessons();
+                    }
+                }, []);
+
+                const handleCheck = () => {
+                    if (selectedAnswer === null || gameOver) return;
+
+                    const currentQuestion = lessonData[currentQuestionIndex];
+
+                    if (selectedAnswer === currentQuestion.correctIndex) {
+                        setIsCorrect(true);
+                        setTimeout(async () => {
+                            if (currentQuestionIndex < lessonData.length - 1) {
+                                setCurrentQuestionIndex(currentQuestionIndex + 1);
+                                setSelectedAnswer(null);
+                                setIsCorrect(null);
+                            } else {
+                                try {
+                                    const res = await fetch(`auth.php?action=save_progress&lang=${selectedLang.id}&increment=10`, { method: 'POST' });
+                                    const data = await res.json();
+                                    if (data.success && currentUser) {
+                                        setCurrentUser({ ...currentUser, progress: data.progress });
+                                    }
+                                } catch (e) {
+                                    console.error("Failed to save progress", e);
+                                }
+
+                                showToast("Lesson Complete! Great job.", "success");
+                                setCurrentView('dashboard');
+                            }
+                        }, 1500);
+                    } else {
+                        setIsCorrect(false);
+                        setShake(true);
+                        setTimeout(() => setShake(false), 500);
+                        
+                        setLives(prev => {
+                            const newLives = prev - 1;
+                            if (newLives <= 0) {
+                                setTimeout(() => setGameOver(true), 500);
+                            }
+                            return newLives;
+                        });
+                    }
+                };
+
+                if (loading) {
+                    return <div className="screen" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Loading lesson data...</div>;
+                }
+
+                if (lessonData.length === 0) {
+                    return (
+                        <div className="screen">
+                            <div className="progress-header">
+                                <i className="fa-solid fa-xmark" style={{ fontSize: '20px', cursor: 'pointer' }} onClick={() => setCurrentView('dashboard')}></i>
+                            </div>
+                            <h2 style={{ textAlign: 'center' }}>No lessons found for {selectedLang.title} ({selectedLang.sub}) yet in the database.</h2>
+                        </div>
+                    );
+                }
+
+                if (gameOver) {
+                    return (
+                        <div className="screen" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                            <i className="fa-solid fa-heart-crack" style={{ fontSize: '80px', color: 'var(--error)', marginBottom: '24px' }}></i>
+                            <h2 className="title">Game Over!</h2>
+                            <p className="subtitle">You ran out of lives. Keep practicing!</p>
+                            <button className="btn" style={{ marginTop: '24px' }} onClick={() => {
+                                setLives(5);
+                                setCurrentQuestionIndex(0);
+                                setSelectedAnswer(null);
+                                setIsCorrect(null);
+                                setGameOver(false);
+                            }}>Retry Lesson</button>
+                            <button className="btn" style={{ marginTop: '12px', background: 'var(--card-bg)', color: 'var(--primary)', border: '2px solid var(--primary)' }} onClick={() => setCurrentView('dashboard')}>Return to Dashboard</button>
+                        </div>
+                    );
+                }
+
+                const currentQuestion = lessonData[currentQuestionIndex];
+                const progressPercent = ((currentQuestionIndex) / lessonData.length) * 100;
+
+                return (
+                    <div className={`screen ${shake ? 'shake-anim' : ''}`} style={{ paddingBottom: '24px', display: 'flex', flexDirection: 'column' }}>
+                        <style>{`
+                            @keyframes lessonShake {
+                                0% { transform: translateX(0); }
+                                25% { transform: translateX(-5px); }
+                                50% { transform: translateX(5px); }
+                                75% { transform: translateX(-5px); }
+                                100% { transform: translateX(0); }
+                            }
+                            .shake-anim {
+                                animation: lessonShake 0.4s ease-in-out;
+                            }
+                        `}</style>
+                        <div className="progress-header">
+                            <i className="fa-solid fa-xmark" style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setCurrentView('dashboard')}></i>
+                            <div className="progress-bar">
+                                <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', color: '#EF4444', fontWeight: 'bold' }}>
+                                <i className="fa-solid fa-heart" style={{ marginRight: '4px' }}></i> {lives}
+                            </div>
+                        </div>
+
+                        <h2 className="title" style={{ fontSize: '22px' }}>Translate this phrase</h2>
+                        <p className="subtitle">Listen carefully and select the correct meaning in English.</p>
+
+                        <div className="lesson-word">
+                            <i className="fa-solid fa-volume-high" style={{ display: 'block', fontSize: '24px', color: 'var(--text-muted)', marginBottom: '16px' }}></i>
+                            {currentQuestion.phrase}
+                        </div>
+
+                        <div style={{ flex: 1 }}>
+                            {currentQuestion.options.map((choice, index) => (
+                                <button
+                                    key={index}
+                                    className={`choice-btn ${selectedAnswer === index ? 'selected' : ''}`}
+                                    onClick={() => {
+                                        if (isCorrect === null || isCorrect === false) setSelectedAnswer(index);
+                                    }}
+                                    style={{
+                                        borderColor: isCorrect === false && selectedAnswer === index ? 'var(--error)' :
+                                            isCorrect === true && selectedAnswer === index ? 'var(--success)' : ''
+                                    }}
+                                >
+                                    <div className="choice-num">{index + 1}</div>
+                                    {choice}
+                                </button>
+                            ))}
+                        </div>
+
+                        {isCorrect === false && (
+                            <div style={{ color: 'var(--error)', fontWeight: 'bold', textAlign: 'center', marginBottom: '12px', fontSize: '16px' }}>
+                                <i className="fa-solid fa-circle-exclamation"></i> Incorrect. Try again!
+                            </div>
+                        )}
+
+                        <button
+                            className="btn"
+                            style={{
+                                marginTop: '8px',
+                                backgroundColor: isCorrect === true ? 'var(--success)' : isCorrect === false ? 'var(--error)' : 'var(--primary)'
+                            }}
+                            onClick={handleCheck}
+                            disabled={isCorrect === true || selectedAnswer === null}
+                        >
+                            {isCorrect === true ? 'Correct!' : isCorrect === false ? 'Check Again' : 'Check'}
+                        </button>
+                    </div>
+                );
+            };
+
+            const RewardScreen = () => {
+                const [isOpened, setIsOpened] = useState(false);
+                const [shakeCount, setShakeCount] = useState(0);
+
+                useEffect(() => {
+                    let lastX = null, lastY = null, lastZ = null;
+                    const threshold = 15;
+
+                    const handleMotion = (event) => {
+                        if (isOpened) return;
+
+                        const { accelerationIncludingGravity } = event;
+                        if (!accelerationIncludingGravity) return;
+
+                        const { x, y, z } = accelerationIncludingGravity;
+
+                        if (lastX !== null) {
+                            const deltaX = Math.abs(lastX - x);
+                            const deltaY = Math.abs(lastY - y);
+                            const deltaZ = Math.abs(lastZ - z);
+
+                            if (deltaX + deltaY + deltaZ > threshold) {
+                                setShakeCount(prev => {
+                                    const next = prev + 1;
+                                    if (next >= 5) {
+                                        setIsOpened(true);
+                                    }
+                                    return next;
+                                });
+                            }
+                        }
+
+                        lastX = x;
+                        lastY = y;
+                        lastZ = z;
+                    };
+
+                    window.addEventListener('devicemotion', handleMotion);
+
+                    return () => {
+                        window.removeEventListener('devicemotion', handleMotion);
+                    };
+                }, [isOpened]);
+
+                const requestPermission = async () => {
+                    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                        try {
+                            const permissionState = await DeviceMotionEvent.requestPermission();
+                            if (permissionState === 'granted') {
+                                // Event listener is already added in useEffect
+                                showToast('Motion sensor activated!', 'success');
+                            } else {
+                                showToast('Permission denied', 'error');
+                            }
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    } else {
+                        showToast("Shake your device to open! (Or tap the gift box if shaking doesn't work)", "info");
+                    }
+                };
+
+                return (
+                    <div className="screen" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', color: 'white' }}>
+                        <div style={{ position: 'absolute', top: '24px', left: '24px', cursor: 'pointer' }} onClick={() => setCurrentView('dashboard')}>
+                            <i className="fa-solid fa-arrow-left" style={{ fontSize: '24px' }}></i>
+                        </div>
+
+                        <h2 style={{ fontSize: '28px', marginBottom: '16px', textAlign: 'center' }}>Daily Reward</h2>
+
+                        {!isOpened ? (
+                            <div style={{ textAlign: 'center' }}>
+                                <p style={{ fontSize: '16px', marginBottom: '40px', opacity: 0.8 }}>Shake your phone to open the gift!</p>
+
+                                <div
+                                    style={{
+                                        fontSize: '120px',
+                                        color: '#FCD34D',
+                                        animation: shakeCount > 0 ? 'shake 0.5s' : 'none',
+                                        cursor: 'pointer',
+                                        textShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                                    }}
+                                    onClick={() => {
+                                        // Fallback click to open
+                                        setIsOpened(true);
+                                    }}
+                                >
+                                    <i className="fa-solid fa-gift"></i>
+                                </div>
+
+                                <button
+                                    style={{ marginTop: '40px', background: 'rgba(255,255,255,0.2)', border: '1px solid white', color: 'white', padding: '12px 24px', borderRadius: '24px', cursor: 'pointer' }}
+                                    onClick={requestPermission}
+                                >
+                                    Enable Motion Sensor (iOS)
+                                </button>
+                            </div>
+                        ) : (
+                            <div style={{ textAlign: 'center', animation: 'fadeIn 0.5s ease' }}>
+                                <p style={{ fontSize: '20px', marginBottom: '20px', color: '#FCD34D', fontWeight: 'bold' }}>Congratulations!</p>
+                                <div style={{ background: 'rgba(255,255,255,0.1)', padding: '40px', borderRadius: '24px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' }}>
+                                    <i className="fa-solid fa-coins" style={{ fontSize: '80px', color: '#FCD34D', marginBottom: '24px' }}></i>
+                                    <h3 style={{ fontSize: '32px', margin: '0 0 8px 0' }}>+50 Coins</h3>
+                                    <p style={{ margin: 0, opacity: 0.8 }}>Keep learning to earn more!</p>
+                                </div>
+                                <button
+                                    className="btn"
+                                    style={{ marginTop: '40px', background: '#FCD34D', color: '#1A1A1A' }}
+                                    onClick={() => setCurrentView('dashboard')}
+                                >
+                                    Claim Reward
+                                </button>
+                            </div>
+                        )}
+
+                        <style>{`
+                            @keyframes shake {
+                                0% { transform: translate(1px, 1px) rotate(0deg); }
+                                10% { transform: translate(-1px, -2px) rotate(-1deg); }
+                                20% { transform: translate(-3px, 0px) rotate(1deg); }
+                                30% { transform: translate(3px, 2px) rotate(0deg); }
+                                40% { transform: translate(1px, -1px) rotate(1deg); }
+                                50% { transform: translate(-1px, 2px) rotate(-1deg); }
+                                60% { transform: translate(-3px, 1px) rotate(0deg); }
+                                70% { transform: translate(3px, 1px) rotate(-1deg); }
+                                80% { transform: translate(-1px, -1px) rotate(1deg); }
+                                90% { transform: translate(1px, 2px) rotate(0deg); }
+                                100% { transform: translate(1px, -2px) rotate(-1deg); }
+                            }
+                        `}</style>
+                    </div>
+                );
+            };
+
+            const ProfileScreen = () => {
+                const [isEditing, setIsEditing] = useState(false);
+                const [formData, setFormData] = useState({
+                    username: currentUser?.username || '',
+                    name: currentUser?.name || '',
+                    bio: currentUser?.bio || '',
+                    birthday: currentUser?.birthday || '',
+                });
+                const [profilePicFile, setProfilePicFile] = useState(null);
+                const [previewUrl, setPreviewUrl] = useState(currentUser?.profile_picture || null);
+                const [error, setError] = useState('');
+                const [isSaving, setIsSaving] = useState(false);
+
+                const handleLogout = async () => {
+                    await fetch('auth.php?action=logout');
+                    setCurrentUser(null);
+                    setCurrentView('welcome');
+                };
+
+                const handleInputChange = (e) => {
+                    const { name, value } = e.target;
+                    setFormData(prev => ({ ...prev, [name]: value }));
+                };
+
+                const handleFileChange = (e) => {
+                    if (e.target.files && e.target.files[0]) {
+                        const file = e.target.files[0];
+                        setProfilePicFile(file);
+                        setPreviewUrl(URL.createObjectURL(file));
+                    }
+                };
+
+                const handleSave = async (e) => {
+                    e.preventDefault();
+                    setError('');
+                    setIsSaving(true);
+
+                    const data = new FormData();
+                    data.append('username', formData.username);
+                    data.append('name', formData.name);
+                    data.append('bio', formData.bio);
+                    data.append('birthday', formData.birthday);
+                    if (profilePicFile) {
+                        data.append('profile_picture', profilePicFile);
+                    }
+
+                    try {
+                        const res = await fetch('auth.php?action=update_profile', { method: 'POST', body: data });
+                        const result = await res.json();
+                        
+                        if (result.success) {
+                            setCurrentUser(result.user);
+                            setIsEditing(false);
+                        } else {
+                            setError(result.error || 'Failed to update profile.');
+                        }
+                    } catch (err) {
+                        setError('Connection failed.');
+                    } finally {
+                        setIsSaving(false);
+                    }
+                };
+
+                if (isEditing) {
+                    return (
+                        <div className="screen" style={{ paddingBottom: '80px', overflowY: 'auto' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
+                                <i className="fa-solid fa-arrow-left" style={{ fontSize: '20px', cursor: 'pointer', marginRight: '16px' }} onClick={() => setIsEditing(false)}></i>
+                                <h2 style={{ fontSize: '20px', margin: 0 }}>Edit Profile</h2>
+                            </div>
+
+                            {error && <div style={{ color: '#DC2626', background: '#FEE2E2', padding: '12px', borderRadius: '8px', textAlign: 'center', marginBottom: '16px', fontSize: '14px', fontWeight: 'bold' }}>{error}</div>}
+
+                            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                                    <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'var(--border-color)', margin: '0 auto 12px auto', overflow: 'hidden', position: 'relative' }}>
+                                        {previewUrl ? (
+                                            <img src={previewUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        ) : (
+                                            <i className="fa-solid fa-user" style={{ fontSize: '50px', color: 'var(--text-muted)', lineHeight: '100px' }}></i>
+                                        )}
+                                        <label htmlFor="profile_pic" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', color: 'white', fontSize: '12px', padding: '4px 0', cursor: 'pointer' }}>Change</label>
+                                        <input type="file" id="profile_pic" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-dark)', marginBottom: '8px', display: 'block' }}>Username *</label>
+                                    <input type="text" name="username" required value={formData.username} onChange={handleInputChange} style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', fontSize: '16px', boxSizing: 'border-box' }} />
+                                </div>
+                                
+                                <div>
+                                    <label style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-dark)', marginBottom: '8px', display: 'block' }}>Full Name</label>
+                                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', fontSize: '16px', boxSizing: 'border-box' }} />
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-dark)', marginBottom: '8px', display: 'block' }}>Bio</label>
+                                    <textarea name="bio" value={formData.bio} onChange={handleInputChange} rows="3" style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', fontSize: '16px', resize: 'none', boxSizing: 'border-box' }} placeholder="Tell us about yourself..."></textarea>
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-dark)', marginBottom: '8px', display: 'block' }}>Birthday</label>
+                                    <input type="date" name="birthday" value={formData.birthday} onChange={handleInputChange} style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', fontSize: '16px', boxSizing: 'border-box' }} />
+                                </div>
+
+                                <button type="submit" className="btn" disabled={isSaving} style={{ marginTop: '8px', opacity: isSaving ? 0.7 : 1 }}>
+                                    {isSaving ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </form>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="screen" style={{ paddingBottom: '80px', overflowY: 'auto' }}>
+                        {/* Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{ width: '32px', height: '32px', borderRadius: '50%', overflow: 'hidden', border: '2px solid var(--primary)' }}>
+                                    {currentUser?.profile_picture ? (
+                                        <img src={currentUser.profile_picture} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <i className="fa-solid fa-user" style={{ fontSize: '16px', color: 'var(--text-muted)', lineHeight: '32px', display: 'block', textAlign: 'center', background: 'var(--border-color)' }}></i>
+                                    )}
+                                </div>
+                                <h2 style={{ fontSize: '18px', margin: 0, fontWeight: '700' }}><i className="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> FluentPath</h2>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
+                                <i className="fa-solid fa-gear" style={{ fontSize: '20px', color: 'var(--primary)', cursor: 'pointer' }} onClick={() => setIsEditing(true)}></i>
+                            </div>
+                        </div>
+                        
+                        {/* Hero Avatar & Info */}
+                        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                            <div style={{ position: 'relative', width: '120px', height: '120px', margin: '0 auto 16px auto' }}>
+                                <div style={{ position: 'absolute', top: '-4px', left: '-4px', right: '-4px', bottom: '-4px', borderRadius: '50%', border: '4px solid var(--primary)', opacity: '0.2' }}></div>
+                                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: '50%', border: '4px solid var(--primary)', borderTopColor: 'transparent', transform: 'rotate(45deg)' }}></div>
+                                <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'var(--border-color)', overflow: 'hidden', border: '4px solid var(--card-bg)', boxSizing: 'border-box', position: 'relative', zIndex: 2 }}>
+                                    {currentUser?.profile_picture ? (
+                                        <img src={currentUser.profile_picture} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <i className="fa-solid fa-user" style={{ fontSize: '50px', color: 'var(--text-muted)', lineHeight: '112px' }}></i>
+                                    )}
+                                </div>
+                            </div>
+                            <h2 style={{ margin: '0 0 4px 0', fontSize: '22px', color: 'var(--text-dark)', fontWeight: '700' }}>{currentUser?.name || currentUser?.username}</h2>
+                            <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '13px', fontWeight: '500' }}>Global Explorer • Level 14</p>
+                        </div>
+
+                        {/* Stats Grid */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+                            <div style={{ background: 'var(--card-bg)', padding: '20px 16px', borderRadius: '16px', border: '1px solid var(--border-color)', textAlign: 'center', boxShadow: '0 4px 12px var(--shadow)' }}>
+                                <i className="fa-solid fa-graduation-cap" style={{ fontSize: '20px', color: 'var(--text-muted)', marginBottom: '12px' }}></i>
+                                <h3 style={{ margin: '0 0 4px 0', fontSize: '24px', color: 'var(--success)', fontWeight: '800' }}>124</h3>
+                                <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>Lessons Done</p>
+                            </div>
+                            <div style={{ background: 'var(--card-bg)', padding: '20px 16px', borderRadius: '16px', border: '1px solid var(--border-color)', textAlign: 'center', boxShadow: '0 4px 12px var(--shadow)' }}>
+                                <i className="fa-solid fa-star" style={{ fontSize: '20px', color: 'var(--text-muted)', marginBottom: '12px' }}></i>
+                                <h3 style={{ margin: '0 0 4px 0', fontSize: '24px', color: 'var(--success)', fontWeight: '800' }}>8,450</h3>
+                                <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>Total XP</p>
+                            </div>
+                        </div>
+
+                        {/* Daily Goal */}
+                        <div style={{ background: 'var(--card-bg)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px', boxShadow: '0 4px 12px var(--shadow)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--text-dark)' }}>Daily Goal</h3>
+                                <div style={{ background: 'var(--primary-light)', color: 'var(--success)', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '700' }}>85% Complete</div>
+                            </div>
+                            <div style={{ height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden', marginBottom: '16px' }}>
+                                <div style={{ width: '85%', height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--success))', borderRadius: '4px' }}></div>
+                            </div>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: '1.5' }}>Finish one more lesson to hit your streak of 15 days!</p>
+                        </div>
+
+                        {/* Awards & Badges */}
+                        <div style={{ marginBottom: '24px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--text-dark)' }}>Awards & Badges</h3>
+                                <span style={{ fontSize: '12px', color: 'var(--success)', fontWeight: '600', cursor: 'pointer' }}>View All</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px', margin: '0 -24px', padding: '0 24px 8px 24px' }}>
+                                <div style={{ background: 'var(--card-bg)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)', minWidth: '110px', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, boxShadow: '0 4px 12px var(--shadow)' }}>
+                                    <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#D1FAE5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', color: '#065F46', fontSize: '24px' }}>
+                                        <i className="fa-solid fa-globe"></i>
+                                    </div>
+                                    <h4 style={{ margin: '0 0 4px 0', fontSize: '13px', color: 'var(--text-dark)', textAlign: 'center' }}>Global Citizen</h4>
+                                    <p style={{ margin: 0, fontSize: '10px', color: 'var(--text-muted)', textAlign: 'center' }}>Learned 3 languages</p>
+                                </div>
+                                <div style={{ background: 'var(--card-bg)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)', minWidth: '110px', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, boxShadow: '0 4px 12px var(--shadow)' }}>
+                                    <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#CCFBF1', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', color: '#115E59', fontSize: '24px' }}>
+                                        <i className="fa-solid fa-leaf"></i>
+                                    </div>
+                                    <h4 style={{ margin: '0 0 4px 0', fontSize: '13px', color: 'var(--text-dark)', textAlign: 'center' }}>Habit Builder</h4>
+                                    <p style={{ margin: 0, fontSize: '10px', color: 'var(--text-muted)', textAlign: 'center' }}>14 Days Streak</p>
+                                </div>
+                                <div style={{ background: 'var(--card-bg)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)', minWidth: '110px', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, boxShadow: '0 4px 12px var(--shadow)' }}>
+                                    <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', color: '#9CA3AF', fontSize: '24px' }}>
+                                        <i className="fa-solid fa-lock"></i>
+                                    </div>
+                                    <h4 style={{ margin: '0 0 4px 0', fontSize: '13px', color: 'var(--text-dark)', textAlign: 'center' }}>Polyglot</h4>
+                                    <p style={{ margin: 0, fontSize: '10px', color: 'var(--text-muted)', textAlign: 'center' }}>Locked</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Recent Milestones */}
+                        <div style={{ marginBottom: '24px' }}>
+                            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: 'var(--text-dark)' }}>Recent Milestones</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <div style={{ background: 'var(--card-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '16px', boxShadow: '0 2px 8px var(--shadow)' }}>
+                                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#DCFCE7', color: '#15803D', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+                                        <i className="fa-solid fa-check-double"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: 'var(--text-dark)' }}>First Lesson Completed!</h4>
+                                        <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>2 days ago • Portuguese B2</p>
+                                    </div>
+                                </div>
+                                <div style={{ background: 'var(--card-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '16px', boxShadow: '0 2px 8px var(--shadow)' }}>
+                                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#F1F5F9', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+                                        <i className="fa-solid fa-comments"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: 'var(--text-dark)' }}>Joined Global Chat</h4>
+                                        <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Yesterday at 11:25am • Explore</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style={{ marginTop: '32px' }}>
+                            <button className="btn" style={{ background: '#FEE2E2', color: '#DC2626', width: '100%', display: 'flex', justifyContent: 'center', border: '1px solid #FCA5A5' }} onClick={handleLogout}>
+                                <i className="fa-solid fa-arrow-right-from-bracket" style={{ marginRight: '8px' }}></i> Log Out
+                            </button>
+                        </div>
+                    </div>
+                );
+            };
+
+            if (authChecking) {
+                return (
+                    <div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--primary)', fontSize: '24px' }}>
+                        <i className="fa-solid fa-spinner fa-spin"></i>
+                    </div>
+                );
+            }
+
+            return (
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+                    <div className={`toast-container ${toast.show ? 'show' : ''} toast-${toast.type}`}>
+                        {toast.type === 'success' && <i className="fa-solid fa-circle-check"></i>}
+                        {toast.type === 'error' && <i className="fa-solid fa-circle-exclamation"></i>}
+                        {toast.type === 'info' && <i className="fa-solid fa-circle-info"></i>}
+                        <span>{toast.message}</span>
+                    </div>
+                    {currentView === 'welcome' && <WelcomeScreen />}
+                    {currentView === 'login' && <LoginScreen />}
+                    {currentView === 'register' && <RegisterScreen />}
+                    {currentView === 'select' && <SelectLanguageScreen />}
+                    {currentView === 'dashboard' && <DashboardScreen />}
+                    {currentView === 'lesson' && <LessonScreen />}
+                    {currentView === 'profile' && <ProfileScreen />}
+                    {currentView === 'reward' && <RewardScreen />}
+
+                    {/* Bottom Navigation */}
+                    {(currentView === 'dashboard' || currentView === 'select' || currentView === 'profile') && (
+                        <div className="bottom-nav">
+                            <div className={`nav-item ${currentView === 'dashboard' ? 'active' : ''}`} onClick={() => setCurrentView('dashboard')}>
+                                <i className="fa-solid fa-house"></i>
+                                <span>Home</span>
+                            </div>
+                            <div className={`nav-item ${currentView === 'select' ? 'active' : ''}`} onClick={() => setCurrentView('select')}>
+                                <i className="fa-solid fa-book"></i>
+                                <span>Learn</span>
+                            </div>
+                            <div className="nav-item">
+                                <i className="fa-solid fa-chart-simple"></i>
+                                <span>Leaderboard</span>
+                            </div>
+                            <div className={`nav-item ${currentView === 'profile' ? 'active' : ''}`} onClick={() => setCurrentView('profile')}>
+                                <i className="fa-regular fa-user"></i>
+                                <span>Profile</span>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
