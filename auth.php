@@ -298,6 +298,38 @@ try {
         exit;
     }
 
+    if ($action === 'award_easter_egg') {
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(["error" => "Not logged in."]);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        
+        // Check if badge already exists
+        $stmt = $conn->prepare("SELECT id FROM user_badges WHERE user_id = ? AND title = 'Milk Shake'");
+        $stmt->execute([$userId]);
+        
+        if (!$stmt->fetch()) {
+            $bStmt = $conn->prepare("INSERT INTO user_badges (user_id, title, description, icon) VALUES (?, 'Milk Shake', 'You shook the app!', 'fa-blender')");
+            $bStmt->execute([$userId]);
+            
+            $mStmt = $conn->prepare("INSERT INTO user_milestones (user_id, title, description, icon) VALUES (?, 'Found an Easter Egg', 'Earned the Milk Shake badge.', 'fa-blender')");
+            $mStmt->execute([$userId]);
+        }
+
+        // Return updated user stats
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
+        $updatedUser['progress'] = getUserProgress($conn, $userId);
+        $updatedUser['badges'] = getUserBadges($conn, $userId);
+        $updatedUser['milestones'] = getUserMilestones($conn, $userId);
+
+        echo json_encode(["success" => true, "user" => $updatedUser]);
+        exit;
+    }
+
     if ($action === 'get_leaderboard') {
         // Fetch top 50 users ranked by total_xp
         $stmt = $conn->prepare("

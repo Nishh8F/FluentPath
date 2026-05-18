@@ -696,6 +696,57 @@
                 }
             }, [currentView]);
 
+            // Global Easter Egg Shake Detector
+            useEffect(() => {
+                if (!currentUser) return;
+                
+                // Check if user already has the Milk Shake badge
+                const hasMilkShakeBadge = currentUser.badges?.some(b => b.title === 'Milk Shake');
+                if (hasMilkShakeBadge) return;
+
+                let lastX = null, lastY = null, lastZ = null;
+                const threshold = 18; // Slightly harder shake for the easter egg
+                let isAwarding = false; // Prevent multiple triggers
+
+                const handleGlobalMotion = (event) => {
+                    if (isAwarding) return;
+                    
+                    const { accelerationIncludingGravity } = event;
+                    if (!accelerationIncludingGravity) return;
+
+                    const { x, y, z } = accelerationIncludingGravity;
+
+                    if (lastX !== null) {
+                        const deltaX = Math.abs(lastX - x);
+                        const deltaY = Math.abs(lastY - y);
+                        const deltaZ = Math.abs(lastZ - z);
+
+                        if (deltaX + deltaY + deltaZ > threshold) {
+                            isAwarding = true;
+                            // Trigger backend award
+                            fetch('auth.php?action=award_easter_egg')
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        setCurrentUser(data.user);
+                                        showToast('Easter Egg Found! You earned the Milk Shake badge! 🥤', 'success');
+                                    }
+                                })
+                                .catch(console.error);
+                        }
+                    }
+
+                    lastX = x;
+                    lastY = y;
+                    lastZ = z;
+                };
+
+                window.addEventListener('devicemotion', handleGlobalMotion);
+                return () => {
+                    window.removeEventListener('devicemotion', handleGlobalMotion);
+                };
+            }, [currentUser]);
+
             // --- Screen Components ---
 
             const LeaderboardScreen = () => {
