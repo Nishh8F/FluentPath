@@ -26,6 +26,18 @@ try {
         return $progress;
     }
 
+    function getUserBadges($conn, $userId) {
+        $stmt = $conn->prepare("SELECT title, description, icon, earned_at FROM user_badges WHERE user_id = ? ORDER BY earned_at DESC");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    function getUserMilestones($conn, $userId) {
+        $stmt = $conn->prepare("SELECT title, description, icon, created_at FROM user_milestones WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     if ($action === 'register') {
         $user = isset($_POST['username']) ? htmlspecialchars(strip_tags(trim($_POST['username']))) : '';
         $name = isset($_POST['name']) ? htmlspecialchars(strip_tags(trim($_POST['name']))) : null;
@@ -84,7 +96,7 @@ try {
             exit;
         }
 
-        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt = $conn->prepare("SELECT id, username, password, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE username = ?");
         $stmt->execute([$user]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -96,6 +108,8 @@ try {
             unset($userData['password']);
             
             $userData['progress'] = getUserProgress($conn, $userData['id']);
+            $userData['badges'] = getUserBadges($conn, $userData['id']);
+            $userData['milestones'] = getUserMilestones($conn, $userData['id']);
             
             echo json_encode(["success" => true, "user" => $userData]);
         } else {
@@ -112,12 +126,14 @@ try {
 
     if ($action === 'check') {
         if (isset($_SESSION['user_id'])) {
-            $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture FROM users WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE id = ?");
             $stmt->execute([$_SESSION['user_id']]);
             $userData = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($userData) {
                 $userData['progress'] = getUserProgress($conn, $userData['id']);
+                $userData['badges'] = getUserBadges($conn, $userData['id']);
+                $userData['milestones'] = getUserMilestones($conn, $userData['id']);
                 echo json_encode(["success" => true, "user" => $userData]);
             } else {
                 echo json_encode(["success" => false, "message" => "User not found."]);
@@ -157,6 +173,51 @@ try {
             $newProgress = min(100, $increment);
             $insertStmt = $conn->prepare("INSERT INTO user_progress (user_id, lang_code, progress_percent) VALUES (?, ?, ?)");
             $insertStmt->execute([$userId, $langCode, $newProgress]);
+        }
+
+        // Stats tracking
+        $stmt = $conn->prepare("SELECT lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $today = date('Y-m-d');
+        $yesterday = date('Y-m-d', strtotime('-1 day'));
+
+        $lessons_done = (int)$stats['lessons_done'] + 1;
+        $total_xp = (int)$stats['total_xp'] + $increment;
+        $daily_xp = (int)$stats['daily_xp'];
+        $current_streak = (int)$stats['current_streak'];
+        $last_activity = $stats['last_activity_date'];
+
+        if ($last_activity === $today) {
+            $daily_xp += $increment;
+        } else if ($last_activity === $yesterday) {
+            $daily_xp = $increment;
+            $current_streak += 1;
+        } else {
+            $daily_xp = $increment;
+            $current_streak = 1;
+        }
+
+        $updateUser = $conn->prepare("UPDATE users SET lessons_done = ?, total_xp = ?, daily_xp = ?, current_streak = ?, last_activity_date = ? WHERE id = ?");
+        $updateUser->execute([$lessons_done, $total_xp, $daily_xp, $current_streak, $today, $userId]);
+
+        // Auto-award Milestones and Badges
+        if ($lessons_done === 1) {
+            $stmt = $conn->prepare("INSERT INTO user_milestones (user_id, title, description, icon) VALUES (?, 'First Lesson Completed!', 'You finished your very first lesson.', 'fa-check')");
+            $stmt->execute([$userId]);
+        }
+
+        if ($current_streak === 3) {
+            $stmt = $conn->prepare("SELECT id FROM user_badges WHERE user_id = ? AND title = 'Habit Builder'");
+            $stmt->execute([$userId]);
+            if (!$stmt->fetch()) {
+                $bStmt = $conn->prepare("INSERT INTO user_badges (user_id, title, description, icon) VALUES (?, 'Habit Builder', '3 Days Streak', 'fa-leaf')");
+                $bStmt->execute([$userId]);
+                
+                $mStmt = $conn->prepare("INSERT INTO user_milestones (user_id, title, description, icon) VALUES (?, 'Earned Habit Builder Badge', 'Achieved a 3-day learning streak.', 'fa-leaf')");
+                $mStmt->execute([$userId]);
+            }
         }
 
         echo json_encode(["success" => true, "progress" => getUserProgress($conn, $userId)]);
@@ -226,10 +287,12 @@ try {
 
         $_SESSION['username'] = $newUsername;
 
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
         $updatedUser['progress'] = getUserProgress($conn, $userId);
+        $updatedUser['badges'] = getUserBadges($conn, $userId);
+        $updatedUser['milestones'] = getUserMilestones($conn, $userId);
 
         echo json_encode(["success" => true, "user" => $updatedUser]);
         exit;
