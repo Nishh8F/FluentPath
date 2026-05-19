@@ -1226,62 +1226,110 @@
             );
 
             const DashboardScreen = () => {
+                const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
+                
+                const insights = [
+                    { title: "The Art of Wayang Kulit", desc: "Discover the ancient shadow play of Kelantan.", image: "wayang_kulit.png" },
+                    { title: "Traditional Wau Bulan", desc: "Learn about the intricate Malaysian moon kite in Terengganu.", image: "wau_bulan.png" },
+                    { title: "Kellie's Castle", desc: "Explore the unfinished, ruined Moorish mansion in Perak.", image: "kellies_castle.png" },
+                    { title: "Batu Caves", desc: "Marvel at the majestic limestone hill and Hindu temples in Selangor.", image: "batu_caves.png" },
+                    { title: "The Rice Bowl", desc: "Experience the endless green paddy fields of Kedah.", image: "kedah_paddy.png" },
+                    { title: "London Landmarks", desc: "A glimpse into the historic architecture of England.", image: "london.png" },
+                    { title: "Red Square", desc: "The historic heart and snowy soul of Moscow.", image: "red_square.png" }
+                ];
+
+                useEffect(() => {
+                    const interval = setInterval(() => {
+                        setCurrentInsightIndex(prev => (prev + 1) % insights.length);
+                    }, 10000);
+                    return () => clearInterval(interval);
+                }, []);
+
                 const currentProgress = currentUser?.progress?.[selectedLang?.id] || 0;
+                const userStreak = currentUser?.current_streak || 0;
+                const nextRewardDays = 3 - (userStreak % 3);
+                
                 let masteryLevel = "Beginner Mastery";
-                if (currentProgress > 30 && currentProgress <= 70) masteryLevel = "Intermediate Mastery";
-                if (currentProgress > 70) masteryLevel = "Advanced Mastery";
+                if (currentProgress >= 30 && currentProgress < 70) masteryLevel = "Intermediate Mastery";
+                if (currentProgress >= 70) masteryLevel = "Advanced Mastery";
+
+                const lessonsCompleted = Math.floor((currentProgress / 100) * 50);
+                const vocabsToNextLevel = currentProgress >= 100 ? 0 : 10 - (currentProgress % 10);
+                
+                const lessonMap = {
+                    kelantan: { title: "Lesson 7: Market Talk", desc: "Learn to bargain at the local Siti Khadijah market.", icon: "fa-utensils" },
+                    terengganu: { title: "Lesson 5: Coastal Slang", desc: "Master the unique terms used by local fishermen in Marang.", icon: "fa-fish" },
+                    perak: { title: "Lesson 4: Heritage Sites", desc: "Explore vocabulary related to the historical town of Kuala Kangsar.", icon: "fa-monument" },
+                    selangor: { title: "Lesson 9: City Commute", desc: "Navigate the busy streets and public transit of Kuala Lumpur.", icon: "fa-train" },
+                    utara: { title: "Lesson 6: Paddy Fields", desc: "Talk about rural life and agriculture in Kedah.", icon: "fa-wheat-awn" },
+                    english: { title: "Lesson 12: Business Meetings", desc: "Learn professional phrases for corporate environments.", icon: "fa-briefcase" },
+                    russian: { title: "Lesson 8: Winter Essentials", desc: "Vocabulary for staying warm and navigating snowy Moscow.", icon: "fa-snowflake" }
+                };
+                
+                const currentLesson = selectedLang ? lessonMap[selectedLang.id] : lessonMap['kelantan'];
 
                 return (
-                <div className="screen">
+                <div className="screen" style={{ paddingBottom: '100px' }}>
+                    {/* Header */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                        <h2 style={{ fontSize: '18px', margin: 0 }}><i className="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> FluentPath</h2>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ width: '24px', height: '24px', background: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
+                                <i className="fa-solid fa-earth-asia"></i>
+                            </div>
+                            <h2 style={{ fontSize: '18px', margin: 0, fontWeight: '700' }}>FluentPath</h2>
+                        </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                             <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
-                            <i className="fa-regular fa-circle-user" style={{ fontSize: '24px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setCurrentView('profile')}></i>
+                            <i className="fa-solid fa-gear" style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setCurrentView('profile')}></i>
                         </div>
                     </div>
 
-                    <div style={{ background: 'var(--card-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '16px' }}>
-                        <p style={{ fontSize: '12px', color: 'var(--success)', fontWeight: '600', marginBottom: '4px' }}>ACTIVE DIALECT</p>
-                        <h3 style={{ margin: '0 0 4px 0' }}>{selectedLang ? `${selectedLang.title} - ${selectedLang.sub}` : 'Select a language'}</h3>
-                        <p style={{ fontSize: '12px', marginBottom: '12px' }}>{masteryLevel} • {currentProgress}% Complete</p>
-                        <div className="progress-bar" style={{ height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
-                            <div className="progress-fill" style={{ width: `${currentProgress}%`, height: '100%', background: 'var(--success)', borderRadius: '4px' }}></div>
-                        </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-                        <div className="streak-card" style={{ flex: 1, margin: 0 }}>
-                            <i className="fa-solid fa-fire" style={{ fontSize: '24px', color: '#FCD34D', marginBottom: '8px' }}></i>
-                            <h2>14</h2>
-                            <p style={{ fontSize: '14px' }}>Day Streak</p>
-                        </div>
-                        <div
-                            style={{ flex: 1, background: 'linear-gradient(135deg, #FFD700 0%, #F5A623 100%)', borderRadius: '16px', padding: '24px', color: 'white', textAlign: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', boxShadow: '0 4px 15px rgba(245, 166, 35, 0.3)' }}
-                            onClick={() => setCurrentView('reward')}
-                        >
-                            <i className="fa-solid fa-gift" style={{ fontSize: '32px', marginBottom: '8px' }}></i>
-                            <h3 style={{ margin: 0, fontSize: '16px', color: 'white' }}>Daily Reward</h3>
-                        </div>
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h3 className="section-header" style={{ margin: '0' }}>Continue Learning</h3>
-                        <span style={{ fontSize: '12px', color: 'var(--primary)', cursor: 'pointer' }} onClick={() => setCurrentView('select')}>View all &gt;</span>
-                    </div>
-
-                    <div style={{ background: 'var(--card-bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                            <div style={{ width: '40px', height: '40px', background: 'var(--primary-light)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
-                                <i className="fa-solid fa-book-open"></i>
+                    {/* Active Course */}
+                    <div style={{ background: 'var(--card-bg)', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '16px', position: 'relative', overflow: 'hidden' }}>
+                        <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'var(--bg-color)', borderRadius: '50%', transform: 'translate(30%, -30%)' }}></div>
+                        <div style={{ padding: '20px', position: 'relative', zIndex: 1 }}>
+                            <div style={{ display: 'inline-block', background: '#D1FAE5', color: '#047857', fontSize: '10px', fontWeight: '700', padding: '4px 8px', borderRadius: '12px', marginBottom: '12px' }}>Active Course</div>
+                            <h3 style={{ margin: '0 0 6px 0', fontSize: '16px', fontWeight: '700' }}>{selectedLang ? `${selectedLang.title} - ${selectedLang.sub}` : 'Kelantan Dialect'}</h3>
+                            <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '20px' }}>{masteryLevel} | {currentProgress}% Complete</p>
+                            
+                            <div className="progress-bar" style={{ height: '6px', background: '#E5E7EB', borderRadius: '3px', overflow: 'hidden', marginBottom: '10px' }}>
+                                <div className="progress-fill" style={{ width: `${currentProgress}%`, height: '100%', background: '#064E3B', borderRadius: '3px' }}></div>
                             </div>
-                            <div>
-                                <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-dark)' }}>Lesson 1: Basics</h4>
-                                <p style={{ fontSize: '12px', margin: 0, color: 'var(--text-muted)' }}>Learn fundamental phrases.</p>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#6B7280', fontWeight: '600' }}>
+                                <span>{lessonsCompleted}/50 Lessons Completed</span>
+                                <span>{vocabsToNextLevel} Vocabs to next level</span>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Day Streak */}
+                    <div 
+                        style={{ background: '#114C3D', borderRadius: '16px', padding: '24px', color: 'white', textAlign: 'center', marginBottom: '24px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '140px', boxShadow: '0 8px 24px rgba(17, 76, 61, 0.2)', cursor: 'pointer' }}
+                        onClick={() => setCurrentView('reward')}
+                    >
+                        <div style={{ position: 'relative', zIndex: 1 }}>
+                            <h2 style={{ fontSize: '32px', margin: '0 0 2px 0', fontWeight: '800' }}>{userStreak}</h2>
+                            <p style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 12px 0' }}>Day Streak</p>
+                            <div style={{ fontSize: '10px', opacity: 0.9, fontWeight: '600' }}>Your next reward is coming in {nextRewardDays} {nextRewardDays === 1 ? 'day' : 'days'}!</div>
+                        </div>
+                    </div>
+
+                    {/* Continue Learning */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                        <h3 className="section-header" style={{ margin: '0', fontSize: '16px' }}>Continue Learning</h3>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600' }} onClick={() => setCurrentView('select')}>View Path &gt;</span>
+                    </div>
+
+                    <div style={{ background: 'var(--card-bg)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ width: '60px', height: '60px', background: '#0F4C3A', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FCD34D', fontSize: '24px', flexShrink: 0 }}>
+                            <i className={`fa-solid ${currentLesson.icon}`}></i>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-dark)', fontSize: '14px', fontWeight: '700' }}>{currentLesson.title}</h4>
+                            <p style={{ fontSize: '11px', margin: 0, color: 'var(--text-muted)', lineHeight: '1.4' }}>{currentLesson.desc}</p>
                         </div>
                         <button
-                            style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '16px', fontWeight: '600', cursor: 'pointer' }}
+                            style={{ background: '#114C3D', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '12px', cursor: 'pointer' }}
                             onClick={() => {
                                 if (selectedLang) setCurrentView('lesson');
                                 else showToast("Please select a language first!", "error");
@@ -1290,6 +1338,76 @@
                             Resume
                         </button>
                     </div>
+
+                    {/* Recommended Topics */}
+                    <div style={{ marginBottom: '24px' }}>
+                        <h3 className="section-header" style={{ margin: '0 0 16px 0', fontSize: '16px' }}>Recommended Topics</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                            <div 
+                                style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+                                onClick={() => showToast('Topic coming soon!', 'info')}
+                            >
+                                <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
+                                    <i className="fa-solid fa-hand-sparkles"></i>
+                                </div>
+                                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '700' }}>Greetings</h4>
+                                <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>10 Vocabs | 5 Mins Read</p>
+                                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginTop: 'auto' }}>
+                                    <span>Free</span>
+                                    <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#D1D5DB' }}></i>
+                                </div>
+                            </div>
+                            <div 
+                                style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+                                onClick={() => showToast('Topic coming soon!', 'info')}
+                            >
+                                <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
+                                    <i className="fa-solid fa-bowl-food"></i>
+                                </div>
+                                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '700' }}>Food</h4>
+                                <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>15 Vocabs | 8 Mins Read</p>
+                                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginTop: 'auto' }}>
+                                    <span>New</span>
+                                    <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#D1D5DB' }}></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div 
+                            style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+                            onClick={() => showToast('Topic coming soon!', 'info')}
+                        >
+                            <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
+                                <i className="fa-solid fa-plane"></i>
+                            </div>
+                            <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '700' }}>Travel</h4>
+                            <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>20 Vocabs | 10 Mins Read</p>
+                            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>
+                                <span>Intermediate</span>
+                                <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#D1D5DB' }}></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Cultural Insight */}
+                    <div 
+                        style={{ borderRadius: '16px', overflow: 'hidden', position: 'relative', height: '140px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer' }}
+                        onClick={() => showToast('Insight coming soon!', 'info')}
+                    >
+                        {insights.map((insight, index) => (
+                            <div key={index} style={{
+                                position: 'absolute', inset: 0, transition: 'opacity 1s ease-in-out',
+                                opacity: currentInsightIndex === index ? 1 : 0, pointerEvents: currentInsightIndex === index ? 'auto' : 'none'
+                            }}>
+                                <img src={`uploads/${insight.image}`} alt={insight.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = 'uploads/wayang_kulit.png'; }} />
+                                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 100%)', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                                    <div style={{ fontSize: '9px', fontWeight: '800', color: '#34D399', letterSpacing: '1px', marginBottom: '4px', textTransform: 'uppercase' }}>Cultural Insight</div>
+                                    <h3 style={{ margin: '0 0 4px 0', color: 'white', fontSize: '18px', fontWeight: '800' }}>{insight.title}</h3>
+                                    <p style={{ margin: 0, color: 'rgba(255,255,255,0.9)', fontSize: '11px', fontWeight: '500' }}>{insight.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
                 </div>
                 );
             };
