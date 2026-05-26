@@ -1,10 +1,8 @@
 <?php
-$host = "localhost;port=3307";
-$username = "root";
-$password = "";
+require_once __DIR__ . '/config.php';
 
 try {
-    $conn = new PDO("mysql:host=$host;dbname=fluentpath", $username, $password);
+    $conn = getDBConnection();
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "CREATE TABLE IF NOT EXISTS user_progress (

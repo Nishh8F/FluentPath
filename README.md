@@ -39,18 +39,32 @@ FluentPath is a modern, beautifully designed, and highly gamified language learn
    ```bash
    cd c:/xampp/htdocs
    git clone https://github.com/Nishh8F/FluentPath.git
+   cd FluentPath
    ```
 
-2. **Database Setup**:
+2. **Configure Database Connection**:
+   - Copy `.env.example` to `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+   - Edit the `.env` file with your database credentials:
+     ```env
+     DB_HOST=localhost
+     DB_PORT=3307
+     DB_NAME=fluentpath
+     DB_USERNAME=root
+     DB_PASSWORD=
+     ```
+
+3. **Database Setup**:
    - Open your MySQL client (e.g., phpMyAdmin) and create a new database named `fluentpath`.
-   - Update the database connection credentials if needed (by default it uses `root` with no password and `port=3307`). Check `setup_progress_db.php`, `api.php`, and `auth.php` to adjust your host and port.
    - Run the initial database setup script to create the necessary tables. You can do this by navigating to:
      ```text
      http://localhost/FluentPath/setup_progress_db.php
      ```
-     *(This script creates the `user_progress` table and handles relationships).*
+     *(This script creates the `user_progress`, `user_milestones` tables and adds required columns to the `users` table).*
 
-3. **Launch the App**:
+4. **Launch the App**:
    Navigate to the root directory in your browser to launch the app:
    ```text
    http://localhost/FluentPath/
@@ -62,7 +76,29 @@ FluentPath is a modern, beautifully designed, and highly gamified language learn
 - `api.php`: The backend endpoint to fetch and update user progress and session state.
 - `auth.php`: Handles user registration, login authentication, and secure session management.
 - `setup_progress_db.php`: Script to initialize the MySQL database schema.
+- `config.php`: Centralized database configuration using environment variables.
+- `.env.example`: Example environment variables file (copy to `.env` and configure).
+- `.gitignore`: Specifies files and directories to exclude from version control.
 - `/uploads/`: Directory intended for handling user-uploaded assets (like avatars).
+
+## 🌐 GitHub Pages Deployment
+
+FluentPath can be deployed to GitHub Pages for the frontend with a separate backend service. 
+
+**See [docs/GITHUB_PAGES_DEPLOYMENT.md](docs/GITHUB_PAGES_DEPLOYMENT.md) for detailed setup instructions.**
+
+Quick references:
+- **Frontend Deployment**: [GITHUB_PAGES_DEPLOYMENT.md](docs/GITHUB_PAGES_DEPLOYMENT.md)
+- **Backend Deployment**: [BACKEND_DEPLOYMENT.md](docs/BACKEND_DEPLOYMENT.md)
+- **Quick Setup (API Configuration)**: [QUICK_SETUP.md](docs/QUICK_SETUP.md)
+
+Quick overview:
+1. Deploy frontend to GitHub Pages (automatic from GitHub repository)
+2. Deploy backend PHP to Heroku, Railway, Render, or similar service
+3. Configure frontend to point to your backend API URL
+4. The backend handles all database operations while GitHub Pages serves the static site
+
+Your live site will be available at: `https://YOUR_USERNAME.github.io/fluentpath/`
 
 ## 🤝 Contributing
 

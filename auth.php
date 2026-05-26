@@ -4,14 +4,10 @@ header("Content-Type: application/json; charset=UTF-8");
 
 session_start();
 
-$host = "localhost;port=3307";
-$username = "root";
-$password = "";
-$database = "fluentpath";
+require_once __DIR__ . '/config.php';
 
 try {
-    $conn = new PDO("mysql:host=$host;dbname=$database", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn = getDBConnection();
 
     $action = $_GET['action'] ?? '';
 

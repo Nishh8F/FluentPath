@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="api-config.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -668,7 +669,7 @@
             }, [theme]);
 
             useEffect(() => {
-                fetch('auth.php?action=check')
+                fetch(getApiUrl('auth.php?action=check'))
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
@@ -683,7 +684,7 @@
             useEffect(() => {
                 if (currentView === 'leaderboard') {
                     setLoadingLeaderboard(true);
-                    fetch('auth.php?action=get_leaderboard')
+                    fetch(getApiUrl('auth.php?action=get_leaderboard'))
                         .then(res => res.json())
                         .then(data => {
                             if (data.success) {
@@ -724,7 +725,7 @@
                         if (deltaX + deltaY + deltaZ > threshold) {
                             isAwarding = true;
                             // Trigger backend award
-                            fetch('auth.php?action=award_easter_egg')
+                            fetch(getApiUrl('auth.php?action=award_easter_egg'))
                                 .then(res => res.json())
                                 .then(data => {
                                     if (data.success) {
@@ -946,7 +947,7 @@
                     formData.append('password', password);
 
                     try {
-                        const res = await fetch('auth.php?action=login', { method: 'POST', body: formData });
+                        const res = await fetch(getApiUrl('auth.php?action=login'), { method: 'POST', body: formData });
                         const data = await res.json();
                         if (data.success) {
                             setCurrentUser(data.user);
@@ -1047,7 +1048,7 @@
                     formData.append('password', password);
 
                     try {
-                        const res = await fetch('auth.php?action=register', { method: 'POST', body: formData });
+                        const res = await fetch(getApiUrl('auth.php?action=register'), { method: 'POST', body: formData });
                         const data = await res.json();
                         if (data.success) {
                             setCurrentUser(data.user);
@@ -1425,7 +1426,7 @@
                 useEffect(() => {
                     const fetchLessons = async () => {
                         try {
-                            const response = await fetch(`api.php?lang=${selectedLang.id}`);
+                            const response = await fetch(getApiUrl(`api.php?lang=${selectedLang.id}`));
                             const data = await response.json();
 
                             if (data && data.length > 0 && !data.error) {
@@ -1457,7 +1458,7 @@
                                 setIsCorrect(null);
                             } else {
                                 try {
-                                    const res = await fetch(`auth.php?action=save_progress&lang=${selectedLang.id}&increment=10`, { method: 'POST' });
+                                    const res = await fetch(getApiUrl(`auth.php?action=save_progress&lang=${selectedLang.id}&increment=10`), { method: 'POST' });
                                     const data = await res.json();
                                     if (data.success && currentUser) {
                                         setCurrentUser({ ...currentUser, progress: data.progress });
@@ -1741,7 +1742,7 @@
                 const [isSaving, setIsSaving] = useState(false);
 
                 const handleLogout = async () => {
-                    await fetch('auth.php?action=logout');
+                    await fetch(getApiUrl('auth.php?action=logout'));
                     setCurrentUser(null);
                     setCurrentView('welcome');
                 };
@@ -1774,7 +1775,7 @@
                     }
 
                     try {
-                        const res = await fetch('auth.php?action=update_profile', { method: 'POST', body: data });
+                        const res = await fetch(getApiUrl('auth.php?action=update_profile'), { method: 'POST', body: data });
                         const result = await res.json();
                         
                         if (result.success) {
