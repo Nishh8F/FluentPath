@@ -3,7 +3,7 @@
 // For production: https://your-backend-api.herokuapp.com (or your backend URL)
 const API_BASE_URL = localStorage.getItem('fluentpath_api_url') || (
     window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost/FluentPath'
+        ? window.location.origin + '/FluentPath'
         : '' // Use same origin for GitHub Pages
 );
 

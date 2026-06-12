@@ -13,7 +13,7 @@ try {
 
     // Helper function to get progress
     function getUserProgress($conn, $userId) {
-        $stmt = $conn->prepare("SELECT lang_code, progress_percent FROM user_progress WHERE user_id = ?");
+        $stmt = $conn->prepare("SELECT l.code AS lang_code, up.progress_percent FROM user_progress up JOIN languages l ON up.language_id = l.id WHERE up.user_id = ?");
         $stmt->execute([$userId]);
         $progress = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -156,19 +156,29 @@ try {
             exit;
         }
         
+        // Fetch language_id for the langCode
+        $langStmt = $conn->prepare("SELECT id FROM languages WHERE code = ?");
+        $langStmt->execute([$langCode]);
+        $languageId = $langStmt->fetchColumn();
+        
+        if ($languageId === false) {
+            echo json_encode(["error" => "Invalid language code."]);
+            exit;
+        }
+        
         // Fetch current progress
-        $stmt = $conn->prepare("SELECT progress_percent FROM user_progress WHERE user_id = ? AND lang_code = ?");
-        $stmt->execute([$userId, $langCode]);
+        $stmt = $conn->prepare("SELECT progress_percent FROM user_progress WHERE user_id = ? AND language_id = ?");
+        $stmt->execute([$userId, $languageId]);
         $currentProgress = $stmt->fetchColumn();
 
         if ($currentProgress !== false) {
             $newProgress = min(100, (int)$currentProgress + $increment);
-            $updateStmt = $conn->prepare("UPDATE user_progress SET progress_percent = ? WHERE user_id = ? AND lang_code = ?");
-            $updateStmt->execute([$newProgress, $userId, $langCode]);
+            $updateStmt = $conn->prepare("UPDATE user_progress SET progress_percent = ? WHERE user_id = ? AND language_id = ?");
+            $updateStmt->execute([$newProgress, $userId, $languageId]);
         } else {
             $newProgress = min(100, $increment);
-            $insertStmt = $conn->prepare("INSERT INTO user_progress (user_id, lang_code, progress_percent) VALUES (?, ?, ?)");
-            $insertStmt->execute([$userId, $langCode, $newProgress]);
+            $insertStmt = $conn->prepare("INSERT INTO user_progress (user_id, language_id, progress_percent) VALUES (?, ?, ?)");
+            $insertStmt->execute([$userId, $languageId, $newProgress]);
         }
 
         // Stats tracking

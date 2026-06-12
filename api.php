@@ -20,7 +20,7 @@ if (!$lang) {
 }
 
 // Fetch 10 random phrases for the selected language
-$query = "SELECT * FROM phrases WHERE lang_code = :lang_code ORDER BY RAND() LIMIT 10";
+$query = "SELECT p.* FROM phrases p JOIN languages l ON p.language_id = l.id WHERE l.code = :lang_code ORDER BY RAND() LIMIT 10";
 $stmt = $conn->prepare($query);
 $stmt->bindParam(':lang_code', $lang);
 $stmt->execute();
