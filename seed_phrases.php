@@ -8,16 +8,14 @@ try {
     // First, let's clear the existing phrases table just in case they ran it multiple times
     $conn->exec("TRUNCATE TABLE phrases");
     
-    // Read the SQL dump line by line
-    $lines = file(__DIR__ . '/phrases_backup.sql');
+    // Read the entire SQL dump
+    $sql = file_get_contents(__DIR__ . '/phrases_backup.sql');
     
-    // Execute only the INSERT INTO statement to avoid PDO comment/syntax parsing errors
+    // Extract the multi-line INSERT INTO statement using regex (starts with INSERT INTO, ends with ;)
     $inserted = false;
-    foreach ($lines as $line) {
-        if (strpos(trim($line), 'INSERT INTO') === 0) {
-            $conn->exec($line);
-            $inserted = true;
-        }
+    if (preg_match('/INSERT INTO `phrases` VALUES .*?;/is', $sql, $matches)) {
+        $conn->exec($matches[0]);
+        $inserted = true;
     }
     
     if ($inserted) {
