@@ -14,3 +14,14 @@ function getApiUrl(endpoint) {
     }
     return API_BASE_URL + '/' + endpoint.replace(/^\//, '');
 }
+
+// Globally override fetch to ALWAYS include credentials
+// This is critical for cross-origin sessions and cookies to work (e.g., GitHub Pages to Azure)
+const originalFetch = window.fetch;
+window.fetch = async function(resource, config) {
+    if (!config) {
+        config = {};
+    }
+    config.credentials = 'include';
+    return originalFetch(resource, config);
+};
