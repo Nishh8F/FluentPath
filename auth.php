@@ -37,7 +37,56 @@ try {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // --- Rate Limiting Logic ---
+    function getRealIpAddr() {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            return trim($ips[0]);
+        } else {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+    }
+
+    // Initialize rate_limits table automatically
+    $conn->exec("CREATE TABLE IF NOT EXISTS login_attempts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        ip_address VARCHAR(45) NOT NULL,
+        attempt_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+        INDEX(ip_address),
+        INDEX(attempt_time)
+    )");
+
+    function checkRateLimit($conn, $ip) {
+        // Clean up old records (older than 15 minutes)
+        $conn->exec("DELETE FROM login_attempts WHERE attempt_time < NOW() - INTERVAL 15 MINUTE");
+        
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM login_attempts WHERE ip_address = ? AND attempt_time >= NOW() - INTERVAL 15 MINUTE");
+        $stmt->execute([$ip]);
+        $attempts = $stmt->fetchColumn();
+        
+        return $attempts < 5;
+    }
+
+    function recordFailedAttempt($conn, $ip) {
+        $stmt = $conn->prepare("INSERT INTO login_attempts (ip_address) VALUES (?)");
+        $stmt->execute([$ip]);
+    }
+
+    function clearAttempts($conn, $ip) {
+        $stmt = $conn->prepare("DELETE FROM login_attempts WHERE ip_address = ?");
+        $stmt->execute([$ip]);
+    }
+    // ---------------------------
+
     if ($action === 'register') {
+        $user_ip = getRealIpAddr();
+        if (!checkRateLimit($conn, $user_ip)) {
+            http_response_code(429);
+            echo json_encode(["error" => "Too many attempts from your IP. Please try again in 15 minutes."]);
+            exit;
+        }
         $user = isset($_POST['username']) ? htmlspecialchars(strip_tags(trim($_POST['username']))) : '';
         $name = isset($_POST['name']) ? htmlspecialchars(strip_tags(trim($_POST['name']))) : null;
         $pass = isset($_POST['password']) ? trim($_POST['password']) : '';
@@ -55,6 +104,7 @@ try {
         $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
         $stmt->execute([$user]);
         if ($stmt->fetchColumn() > 0) {
+            recordFailedAttempt($conn, $user_ip);
             echo json_encode(["error" => "Username is already taken."]);
             exit;
         }
@@ -66,6 +116,7 @@ try {
         $_SESSION['user_id'] = $conn->lastInsertId();
         $_SESSION['username'] = $user;
 
+        clearAttempts($conn, $user_ip);
         echo json_encode([
             "success" => true, 
             "user" => [
@@ -82,6 +133,13 @@ try {
     }
 
     if ($action === 'login') {
+        $user_ip = getRealIpAddr();
+        if (!checkRateLimit($conn, $user_ip)) {
+            http_response_code(429);
+            echo json_encode(["error" => "Too many failed login attempts. Please try again in 15 minutes."]);
+            exit;
+        }
+
         $user = isset($_POST['username']) ? htmlspecialchars(strip_tags(trim($_POST['username']))) : '';
         $pass = isset($_POST['password']) ? trim($_POST['password']) : '';
 
@@ -100,6 +158,7 @@ try {
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($userData && password_verify($pass, $userData['password'])) {
+            clearAttempts($conn, $user_ip);
             $_SESSION['user_id'] = $userData['id'];
             $_SESSION['username'] = $userData['username'];
             
@@ -112,6 +171,7 @@ try {
             
             echo json_encode(["success" => true, "user" => $userData]);
         } else {
+            recordFailedAttempt($conn, $user_ip);
             echo json_encode(["error" => "Invalid username or password."]);
         }
         exit;
