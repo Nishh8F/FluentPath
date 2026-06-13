@@ -11,8 +11,19 @@ try {
     // Read the SQL dump
     $sql = file_get_contents(__DIR__ . '/phrases_backup.sql');
     
-    // Execute the SQL dump
-    $conn->exec($sql);
+    // Remove SQL comments to prevent syntax errors
+    $sql = preg_replace('/--.*$/m', '', $sql);
+    $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
+    
+    // Split the dump into individual queries
+    $queries = array_filter(array_map('trim', explode(';', $sql)));
+    
+    // Execute each query
+    foreach ($queries as $query) {
+        if (!empty($query)) {
+            $conn->exec($query);
+        }
+    }
     
     echo "<h1>Phrases Seeded Successfully!</h1>";
     echo "<p>All the lesson data has been successfully imported into your Azure database.</p>";
