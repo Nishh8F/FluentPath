@@ -15,6 +15,24 @@ try {
     $conn = getDBConnection();
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    // 0. Create users table if it doesn't exist
+    $sqlUsers = "CREATE TABLE IF NOT EXISTS users (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(50) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        name VARCHAR(100) DEFAULT NULL,
+        bio TEXT DEFAULT NULL,
+        birthday DATE DEFAULT NULL,
+        profile_picture VARCHAR(255) DEFAULT NULL,
+        lessons_done INT(11) DEFAULT 0,
+        total_xp INT(11) DEFAULT 0,
+        daily_xp INT(11) DEFAULT 0,
+        current_streak INT(11) DEFAULT 0,
+        last_activity_date DATE DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+    $conn->exec($sqlUsers);
+    echo "users table created or already exists.<br>\n";
+
     // 1. Create languages table if it doesn't exist
     $sqlLanguages = "CREATE TABLE IF NOT EXISTS languages (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
