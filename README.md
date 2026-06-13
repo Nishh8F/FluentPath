@@ -17,6 +17,7 @@ FluentPath is a modern, beautifully designed, and highly gamified language learn
   - High-fidelity dark mode designed for a sleek and immersive experience.
 - **Interactive Capabilities**: Built-in support for motion sensors (specifically iOS) to unlock rewards via interactive, physical actions.
 - **Robust Backend integration**: Uses a fast PHP and MySQL stack to securely handle authentication, track user progress across different languages, and persist state.
+- **Enterprise-Grade Security**: Features IP-based rate limiting to prevent brute-force attacks, secure Cross-Origin Resource Sharing (CORS) for decoupled deployments, and PDO prepared statements to defend against SQL Injection.
 
 ## 🛠️ Technology Stack
 
@@ -58,11 +59,7 @@ FluentPath is a modern, beautifully designed, and highly gamified language learn
 
 3. **Database Setup**:
    - Open your MySQL client (e.g., phpMyAdmin) and create a new database named `fluentpath`.
-   - Run the initial database setup script to create the necessary tables. You can do this by navigating to:
-     ```text
-     http://localhost/FluentPath/setup_progress_db.php
-     ```
-     *(This script creates the `user_progress`, `user_milestones` tables and adds required columns to the `users` table).*
+   - Import the database structure and seed data manually using your preferred SQL client.
 
 4. **Launch the App**:
    Navigate to the root directory in your browser to launch the app:
@@ -74,31 +71,24 @@ FluentPath is a modern, beautifully designed, and highly gamified language learn
 
 - `index.html`: The core Single Page Application containing all UI structures, styles, and frontend logic.
 - `api.php`: The backend endpoint to fetch and update user progress and session state.
-- `auth.php`: Handles user registration, login authentication, and secure session management.
-- `setup_progress_db.php`: Script to initialize the MySQL database schema.
+- `auth.php`: Handles user registration, login authentication, secure session management, and rate limiting.
+- `api-config.js`: Central configuration for API routing and global fetch overrides.
 - `config.php`: Centralized database configuration using environment variables.
 - `.env.example`: Example environment variables file (copy to `.env` and configure).
 - `.gitignore`: Specifies files and directories to exclude from version control.
 - `/uploads/`: Directory intended for handling user-uploaded assets (like avatars).
 
-## 🌐 GitHub Pages Deployment
+## 🌐 Cloud Deployment (Azure)
 
-FluentPath can be deployed to GitHub Pages for the frontend with a separate backend service. 
+FluentPath is configured for a decoupled architecture where the frontend can be hosted independently from the backend.
 
-**See [docs/GITHUB_PAGES_DEPLOYMENT.md](docs/GITHUB_PAGES_DEPLOYMENT.md) for detailed setup instructions.**
+**Current Production Architecture:**
+1. **Frontend**: Can be hosted on GitHub Pages or any static site host.
+2. **Backend**: Hosted on **Microsoft Azure App Service** using PHP.
+3. **Database**: Hosted on **Azure Database for MySQL (Flexible Server)**.
+4. **CI/CD**: Fully integrated with **GitHub Actions** for automatic deployment to Azure upon pushing to the `main` branch.
 
-Quick references:
-- **Frontend Deployment**: [GITHUB_PAGES_DEPLOYMENT.md](docs/GITHUB_PAGES_DEPLOYMENT.md)
-- **Backend Deployment**: [BACKEND_DEPLOYMENT.md](docs/BACKEND_DEPLOYMENT.md)
-- **Quick Setup (API Configuration)**: [QUICK_SETUP.md](docs/QUICK_SETUP.md)
-
-Quick overview:
-1. Deploy frontend to GitHub Pages (automatic from GitHub repository)
-2. Deploy backend PHP to Heroku, Railway, Render, or similar service
-3. Configure frontend to point to your backend API URL
-4. The backend handles all database operations while GitHub Pages serves the static site
-
-Your live site will be available at: `https://YOUR_USERNAME.github.io/fluentpath/`
+*Note: For security reasons, database initialization scripts have been removed from the repository. Database migrations should be handled securely via direct Azure portal access or secure CI/CD pipelines.*
 
 ## 🤝 Contributing
 
