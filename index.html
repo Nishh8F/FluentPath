@@ -686,16 +686,43 @@
             }, [theme]);
 
             useEffect(() => {
-                fetch(getApiUrl('auth.php?action=check'))
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            setCurrentUser(data.user);
-                            setCurrentView('dashboard');
-                        }
-                        setAuthChecking(false);
-                    })
-                    .catch(() => setAuthChecking(false));
+                const checkSession = () => {
+                    fetch(getApiUrl('auth.php?action=check'))
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                setCurrentUser(data.user);
+                                setCurrentView('dashboard');
+                            }
+                            setAuthChecking(false);
+                        })
+                        .catch(() => setAuthChecking(false));
+                };
+
+                if (window.AppInventor) {
+                    const msg = window.AppInventor.getWebViewString();
+                    if (msg && msg.startsWith("LOAD_TOKEN:")) {
+                        const token = msg.split(":")[1];
+                        const formData = new FormData();
+                        formData.append('auth_token', token);
+                        
+                        fetch(getApiUrl('auth.php?action=token_login'), { method: 'POST', body: formData })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    setCurrentUser(data.user);
+                                    setCurrentView('dashboard');
+                                    setAuthChecking(false);
+                                } else {
+                                    checkSession();
+                                }
+                            })
+                            .catch(() => checkSession());
+                        return;
+                    }
+                }
+                
+                checkSession();
             }, []);
 
             useEffect(() => {
@@ -985,6 +1012,9 @@
                         const res = await fetch(getApiUrl('auth.php?action=login'), { method: 'POST', body: formData });
                         const data = await res.json();
                         if (data.success) {
+                            if (window.AppInventor && data.user.auth_token) {
+                                window.AppInventor.setWebViewString("SAVE_TOKEN:" + data.user.auth_token);
+                            }
                             setCurrentUser(data.user);
                             setCurrentView('dashboard');
                         } else {
@@ -1086,6 +1116,9 @@
                         const res = await fetch(getApiUrl('auth.php?action=register'), { method: 'POST', body: formData });
                         const data = await res.json();
                         if (data.success) {
+                            if (window.AppInventor && data.user.auth_token) {
+                                window.AppInventor.setWebViewString("SAVE_TOKEN:" + data.user.auth_token);
+                            }
                             setCurrentUser(data.user);
                             setCurrentView('dashboard');
                         } else {

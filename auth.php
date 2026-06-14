@@ -110,8 +110,9 @@ try {
         }
 
         $hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
-        $insertStmt = $conn->prepare("INSERT INTO users (username, password, name) VALUES (?, ?, ?)");
-        $insertStmt->execute([$user, $hashedPassword, $name]);
+        $authToken = bin2hex(random_bytes(32));
+        $insertStmt = $conn->prepare("INSERT INTO users (username, password, name, auth_token) VALUES (?, ?, ?, ?)");
+        $insertStmt->execute([$user, $hashedPassword, $name, $authToken]);
 
         $_SESSION['user_id'] = $conn->lastInsertId();
         $_SESSION['username'] = $user;
@@ -123,12 +124,39 @@ try {
                 "id" => $_SESSION['user_id'], 
                 "username" => $user,
                 "name" => $name,
+                "auth_token" => $authToken,
                 "bio" => null,
                 "birthday" => null,
                 "profile_picture" => null,
                 "progress" => []
             ]
         ]);
+        exit;
+    }
+
+    if ($action === 'token_login') {
+        $token = isset($_POST['auth_token']) ? trim($_POST['auth_token']) : '';
+        if (empty($token)) {
+            echo json_encode(["error" => "Token is required."]);
+            exit;
+        }
+
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, auth_token FROM users WHERE auth_token = ?");
+        $stmt->execute([$token]);
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($userData) {
+            $_SESSION['user_id'] = $userData['id'];
+            $_SESSION['username'] = $userData['username'];
+            
+            $userData['progress'] = getUserProgress($conn, $userData['id']);
+            $userData['badges'] = getUserBadges($conn, $userData['id']);
+            $userData['milestones'] = getUserMilestones($conn, $userData['id']);
+            
+            echo json_encode(["success" => true, "user" => $userData]);
+        } else {
+            echo json_encode(["error" => "Invalid token."]);
+        }
         exit;
     }
 
@@ -161,6 +189,11 @@ try {
             clearAttempts($conn, $user_ip);
             $_SESSION['user_id'] = $userData['id'];
             $_SESSION['username'] = $userData['username'];
+            
+            $authToken = bin2hex(random_bytes(32));
+            $updateTokenStmt = $conn->prepare("UPDATE users SET auth_token = ? WHERE id = ?");
+            $updateTokenStmt->execute([$authToken, $userData['id']]);
+            $userData['auth_token'] = $authToken;
             
             // Remove password from response
             unset($userData['password']);
