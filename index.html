@@ -1442,6 +1442,8 @@
 
                 const currentProgress = currentUser?.progress?.[selectedLang?.id] || 0;
                 const userStreak = currentUser?.current_streak || 0;
+                const todayStr = new Date().toISOString().split('T')[0];
+                const hasClaimedToday = currentUser?.last_reward_date === todayStr;
                 const nextRewardDays = 3 - (userStreak % 3);
                 
                 let masteryLevel = "Beginner Mastery";
@@ -1500,12 +1502,16 @@
                     {/* Day Streak */}
                     <div 
                         style={{ background: '#114C3D', borderRadius: '16px', padding: '24px', color: 'white', textAlign: 'center', marginBottom: '24px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '140px', boxShadow: '0 8px 24px rgba(17, 76, 61, 0.2)', cursor: 'pointer' }}
-                        onClick={() => setCurrentView('reward')}
+                        onClick={() => {
+                            if (!hasClaimedToday) setCurrentView('reward');
+                        }}
                     >
                         <div style={{ position: 'relative', zIndex: 1 }}>
                             <h2 style={{ fontSize: '32px', margin: '0 0 2px 0', fontWeight: '800' }}>{userStreak}</h2>
                             <p style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 12px 0' }}>Day Streak</p>
-                            <div style={{ fontSize: '10px', opacity: 0.9, fontWeight: '600' }}>Your next reward is coming in {nextRewardDays} {nextRewardDays === 1 ? 'day' : 'days'}!</div>
+                            <div style={{ fontSize: '10px', opacity: 0.9, fontWeight: '600' }}>
+                                {hasClaimedToday ? 'Reward claimed today! Come back tomorrow.' : 'Claim your daily reward now!'}
+                            </div>
                         </div>
                     </div>
 
@@ -1791,6 +1797,7 @@
             const RewardScreen = () => {
                 const [isOpened, setIsOpened] = useState(false);
                 const [shakeCount, setShakeCount] = useState(0);
+                const [isClaiming, setIsClaiming] = useState(false);
 
                 useEffect(() => {
                     let lastX = null, lastY = null, lastZ = null;
@@ -1890,15 +1897,33 @@
                                 <p style={{ fontSize: '20px', marginBottom: '20px', color: '#FCD34D', fontWeight: 'bold' }}>Congratulations!</p>
                                 <div style={{ background: 'rgba(255,255,255,0.1)', padding: '40px', borderRadius: '24px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' }}>
                                     <i className="fa-solid fa-coins" style={{ fontSize: '80px', color: '#FCD34D', marginBottom: '24px' }}></i>
-                                    <h3 style={{ fontSize: '32px', margin: '0 0 8px 0' }}>+50 Coins</h3>
+                                    <h3 style={{ fontSize: '32px', margin: '0 0 8px 0' }}>+50 XP</h3>
                                     <p style={{ margin: 0, opacity: 0.8 }}>Keep learning to earn more!</p>
                                 </div>
                                 <button
                                     className="btn"
-                                    style={{ marginTop: '40px', background: '#FCD34D', color: '#1A1A1A' }}
-                                    onClick={() => setCurrentView('dashboard')}
+                                    style={{ marginTop: '40px', background: '#FCD34D', color: '#1A1A1A', opacity: isClaiming ? 0.7 : 1 }}
+                                    disabled={isClaiming}
+                                    onClick={async () => {
+                                        setIsClaiming(true);
+                                        try {
+                                            const res = await fetch(getApiUrl('auth.php?action=claim_daily_reward'), { method: 'POST' });
+                                            const data = await res.json();
+                                            if (data.success) {
+                                                setCurrentUser(data.user);
+                                                showToast('Reward claimed successfully!', 'success');
+                                                setCurrentView('dashboard');
+                                            } else {
+                                                showToast(data.error || 'Failed to claim reward', 'error');
+                                                setCurrentView('dashboard');
+                                            }
+                                        } catch (e) {
+                                            showToast('Connection failed', 'error');
+                                            setIsClaiming(false);
+                                        }
+                                    }}
                                 >
-                                    Claim Reward
+                                    {isClaiming ? 'Claiming...' : 'Claim Reward'}
                                 </button>
                             </div>
                         )}

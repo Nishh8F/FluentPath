@@ -141,7 +141,7 @@ try {
             exit;
         }
 
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, auth_token FROM users WHERE auth_token = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, auth_token FROM users WHERE auth_token = ?");
         $stmt->execute([$token]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -181,7 +181,7 @@ try {
             exit;
         }
 
-        $stmt = $conn->prepare("SELECT id, username, password, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE username = ?");
+        $stmt = $conn->prepare("SELECT id, username, password, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE username = ?");
         $stmt->execute([$user]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -238,7 +238,42 @@ try {
         $stmt->execute([$userId]);
 
         // Return updated user data
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $userData['progress'] = getUserProgress($conn, $userData['id']);
+        $userData['badges'] = getUserBadges($conn, $userData['id']);
+        $userData['milestones'] = getUserMilestones($conn, $userData['id']);
+        
+        echo json_encode(["success" => true, "user" => $userData]);
+        exit;
+    }
+
+    if ($action === 'claim_daily_reward') {
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(["error" => "Not authenticated."]);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        $today = date('Y-m-d');
+
+        $stmt = $conn->prepare("SELECT last_reward_date FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $last_reward = $stmt->fetchColumn();
+
+        if ($last_reward === $today) {
+            echo json_encode(["error" => "Already claimed today."]);
+            exit;
+        }
+
+        // Award 50 XP
+        $updateStmt = $conn->prepare("UPDATE users SET total_xp = total_xp + 50, daily_xp = daily_xp + 50, last_reward_date = ? WHERE id = ?");
+        $updateStmt->execute([$today, $userId]);
+
+        // Return updated user data
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         
@@ -258,7 +293,7 @@ try {
 
     if ($action === 'check') {
         if (isset($_SESSION['user_id'])) {
-            $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
             $stmt->execute([$_SESSION['user_id']]);
             $userData = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -429,7 +464,7 @@ try {
 
         $_SESSION['username'] = $newUsername;
 
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
         $updatedUser['progress'] = getUserProgress($conn, $userId);
@@ -461,7 +496,7 @@ try {
         }
 
         // Return updated user stats
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
         $updatedUser['progress'] = getUserProgress($conn, $userId);
