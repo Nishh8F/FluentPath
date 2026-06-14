@@ -391,7 +391,7 @@ try {
             $current_streak = 1;
         }
 
-        $updateUser = $conn->prepare("UPDATE users SET lessons_done = ?, total_xp = ?, daily_xp = ?, current_streak = ?, coins = coins + 10, last_activity_date = ? WHERE id = ?");
+        $updateUser = $conn->prepare("UPDATE users SET lessons_done = ?, total_xp = ?, daily_xp = ?, current_streak = ?, coins = coins + 30, last_activity_date = ? WHERE id = ?");
         $updateUser->execute([$lessons_done, $total_xp, $daily_xp, $current_streak, $today, $userId]);
 
         // Auto-award Milestones and Badges
