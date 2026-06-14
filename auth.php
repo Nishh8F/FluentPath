@@ -266,18 +266,14 @@ try {
         $userId = $_SESSION['user_id'];
         $today = date('Y-m-d');
 
-        $stmt = $conn->prepare("SELECT last_reward_date FROM users WHERE id = ?");
-        $stmt->execute([$userId]);
-        $last_reward = $stmt->fetchColumn();
+        // Award 50 XP atomically to prevent race condition spamming
+        $updateStmt = $conn->prepare("UPDATE users SET total_xp = total_xp + 50, daily_xp = daily_xp + 50, last_reward_date = ? WHERE id = ? AND (last_reward_date IS NULL OR last_reward_date != ?)");
+        $updateStmt->execute([$today, $userId, $today]);
 
-        if ($last_reward === $today) {
-            echo json_encode(["error" => "Already claimed today."]);
+        if ($updateStmt->rowCount() === 0) {
+            echo json_encode(["error" => "Already claimed today or request was spammed."]);
             exit;
         }
-
-        // Award 50 XP
-        $updateStmt = $conn->prepare("UPDATE users SET total_xp = total_xp + 50, daily_xp = daily_xp + 50, last_reward_date = ? WHERE id = ?");
-        $updateStmt->execute([$today, $userId]);
 
         // Return updated user data
         $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
