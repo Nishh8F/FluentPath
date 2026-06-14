@@ -1351,13 +1351,42 @@
                     lang.sub.toLowerCase().includes(q)
                 );
 
+                const handleUnlock = (lang) => {
+                    if ((currentUser?.coins || 0) < 60) {
+                        showToast("Not enough coins! You need 60 coins.", "error");
+                        return;
+                    }
+                    if (window.confirm(`Unlock ${lang.sub} for 60 coins?`)) {
+                        const formData = new FormData();
+                        formData.append('lang', lang.id);
+                        fetch(getApiUrl('auth.php?action=unlock_language'), { method: 'POST', body: formData })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    setCurrentUser(data.user);
+                                    showToast("Language unlocked!", "success");
+                                    setSelectedLang(lang);
+                                    setCurrentView('dashboard');
+                                } else {
+                                    showToast(data.error || "Failed to unlock.", "error");
+                                }
+                            })
+                            .catch(err => showToast("Network error.", "error"));
+                    }
+                };
+
                 return (
                     <div className="screen">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                             <h2 style={{ fontSize: '20px', margin: 0 }}>
                                 <i className="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> FluentPath
                             </h2>
-                            <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                <div style={{ background: 'var(--primary-light)', color: 'var(--primary)', padding: '6px 12px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 8px var(--shadow)' }}>
+                                    <span style={{ fontSize: '16px' }}>🪙</span> {currentUser?.coins || 0}
+                                </div>
+                                <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
+                            </div>
                         </div>
 
                         <div style={{ background: 'var(--card-bg)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '24px', display: 'flex', alignItems: 'center', color: 'var(--text-dark)' }}>
@@ -1382,32 +1411,64 @@
                         {filteredLocal.length > 0 && (
                             <>
                                 <h3 className="section-header"><i className="fa-solid fa-location-dot"></i> Local Dialects</h3>
-                                {filteredLocal.map(lang => (
-                                    <div key={lang.id} className="lang-card" onClick={() => { setSelectedLang(lang); setCurrentView('dashboard'); }}>
-                                        <div className="lang-icon">{lang.icon}</div>
-                                        <div className="lang-info">
+                                {filteredLocal.map(lang => {
+                                    const isUnlocked = currentUser?.progress?.[lang.id] !== undefined;
+                                    return (
+                                    <div key={lang.id} className="lang-card" onClick={() => { 
+                                        if (isUnlocked) {
+                                            setSelectedLang(lang); setCurrentView('dashboard'); 
+                                        } else {
+                                            handleUnlock(lang);
+                                        }
+                                    }}>
+                                        <div className="lang-icon" style={{ opacity: isUnlocked ? 1 : 0.3, filter: isUnlocked ? 'none' : 'grayscale(100%)' }}>{lang.icon}</div>
+                                        <div className="lang-info" style={{ opacity: isUnlocked ? 1 : 0.6 }}>
                                             <div className="lang-title">{lang.title}</div>
                                             <div className="lang-sub">{lang.sub}</div>
                                         </div>
-                                        <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                                        {isUnlocked ? (
+                                            <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                                        ) : (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', fontWeight: 'bold', background: 'var(--bg-color)', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>
+                                                <i className="fa-solid fa-lock" style={{ fontSize: '10px' }}></i>
+                                                <span style={{ color: '#FACC15' }}>60</span> 🪙
+                                            </div>
+                                        )}
                                     </div>
-                                ))}
+                                    );
+                                })}
                             </>
                         )}
 
                         {filteredInternational.length > 0 && (
                             <>
                                 <h3 className="section-header"><i className="fa-solid fa-globe"></i> International</h3>
-                                {filteredInternational.map(lang => (
-                                    <div key={lang.id} className="lang-card" onClick={() => { setSelectedLang(lang); setCurrentView('dashboard'); }}>
-                                        <div className="lang-icon">{lang.icon}</div>
-                                        <div className="lang-info">
+                                {filteredInternational.map(lang => {
+                                    const isUnlocked = currentUser?.progress?.[lang.id] !== undefined;
+                                    return (
+                                    <div key={lang.id} className="lang-card" onClick={() => { 
+                                        if (isUnlocked) {
+                                            setSelectedLang(lang); setCurrentView('dashboard'); 
+                                        } else {
+                                            handleUnlock(lang);
+                                        }
+                                    }}>
+                                        <div className="lang-icon" style={{ opacity: isUnlocked ? 1 : 0.3, filter: isUnlocked ? 'none' : 'grayscale(100%)' }}>{lang.icon}</div>
+                                        <div className="lang-info" style={{ opacity: isUnlocked ? 1 : 0.6 }}>
                                             <div className="lang-title">{lang.title}</div>
                                             <div className="lang-sub">{lang.sub}</div>
                                         </div>
-                                        <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                                        {isUnlocked ? (
+                                            <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                                        ) : (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', fontWeight: 'bold', background: 'var(--bg-color)', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>
+                                                <i className="fa-solid fa-lock" style={{ fontSize: '10px' }}></i>
+                                                <span style={{ color: '#FACC15' }}>60</span> 🪙
+                                            </div>
+                                        )}
                                     </div>
-                                ))}
+                                    );
+                                })}
                             </>
                         )}
 
@@ -1475,6 +1536,9 @@
                             <h2 style={{ fontSize: '18px', margin: 0, fontWeight: '700' }}>FluentPath</h2>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div style={{ background: 'var(--primary-light)', color: 'var(--primary)', padding: '6px 12px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 8px var(--shadow)' }}>
+                                <span style={{ fontSize: '16px' }}>🪙</span> {currentUser?.coins || 0}
+                            </div>
                             <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
                             <i className="fa-solid fa-gear" style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setCurrentView('profile')}></i>
                         </div>
@@ -1914,7 +1978,7 @@
                                 <p style={{ fontSize: '20px', marginBottom: '20px', color: '#FCD34D', fontWeight: 'bold' }}>Congratulations!</p>
                                 <div style={{ background: 'rgba(255,255,255,0.1)', padding: '40px', borderRadius: '24px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)' }}>
                                     <i className="fa-solid fa-coins" style={{ fontSize: '80px', color: '#FCD34D', marginBottom: '24px' }}></i>
-                                    <h3 style={{ fontSize: '32px', margin: '0 0 8px 0' }}>+50 XP</h3>
+                                    <h3 style={{ fontSize: '32px', margin: '0 0 8px 0' }}>+50 XP & +50 🪙</h3>
                                     <p style={{ margin: 0, opacity: 0.8 }}>Keep learning to earn more!</p>
                                 </div>
                                 <button

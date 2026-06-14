@@ -123,6 +123,7 @@ try {
                 "bio" => null,
                 "birthday" => null,
                 "profile_picture" => null,
+                "coins" => 100,
                 "progress" => []
             ]
         ]);
@@ -136,7 +137,7 @@ try {
             exit;
         }
 
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, auth_token FROM users WHERE auth_token = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, coins, auth_token FROM users WHERE auth_token = ?");
         $stmt->execute([$token]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -176,7 +177,7 @@ try {
             exit;
         }
 
-        $stmt = $conn->prepare("SELECT id, username, password, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE username = ?");
+        $stmt = $conn->prepare("SELECT id, username, password, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, coins FROM users WHERE username = ?");
         $stmt->execute([$user]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -233,7 +234,7 @@ try {
         $stmt->execute([$userId]);
 
         // Return updated user data
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, coins FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         
@@ -254,8 +255,8 @@ try {
         $userId = $_SESSION['user_id'];
         $today = date('Y-m-d');
 
-        // Award 50 XP atomically to prevent race condition spamming
-        $updateStmt = $conn->prepare("UPDATE users SET total_xp = total_xp + 50, daily_xp = daily_xp + 50, last_reward_date = ? WHERE id = ? AND (last_reward_date IS NULL OR last_reward_date != ?)");
+        // Award 50 XP and 50 Coins atomically to prevent race condition spamming
+        $updateStmt = $conn->prepare("UPDATE users SET total_xp = total_xp + 50, daily_xp = daily_xp + 50, coins = coins + 50, last_reward_date = ? WHERE id = ? AND (last_reward_date IS NULL OR last_reward_date != ?)");
         $updateStmt->execute([$today, $userId, $today]);
 
         if ($updateStmt->rowCount() === 0) {
@@ -264,7 +265,7 @@ try {
         }
 
         // Return updated user data
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, coins FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         
@@ -284,7 +285,7 @@ try {
 
     if ($action === 'check') {
         if (isset($_SESSION['user_id'])) {
-            $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
+            $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, coins FROM users WHERE id = ?");
             $stmt->execute([$_SESSION['user_id']]);
             $userData = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -367,7 +368,7 @@ try {
             $current_streak = 1;
         }
 
-        $updateUser = $conn->prepare("UPDATE users SET lessons_done = ?, total_xp = ?, daily_xp = ?, current_streak = ?, last_activity_date = ? WHERE id = ?");
+        $updateUser = $conn->prepare("UPDATE users SET lessons_done = ?, total_xp = ?, daily_xp = ?, current_streak = ?, coins = coins + 10, last_activity_date = ? WHERE id = ?");
         $updateUser->execute([$lessons_done, $total_xp, $daily_xp, $current_streak, $today, $userId]);
 
         // Auto-award Milestones and Badges
@@ -389,6 +390,68 @@ try {
         }
 
         echo json_encode(["success" => true, "progress" => getUserProgress($conn, $userId)]);
+        exit;
+    }
+
+    if ($action === 'unlock_language') {
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(["error" => "Not authenticated."]);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        $langCode = isset($_POST['lang']) ? $_POST['lang'] : '';
+        
+        if (empty($langCode)) {
+            echo json_encode(["error" => "Language code is required."]);
+            exit;
+        }
+
+        $langStmt = $conn->prepare("SELECT id FROM languages WHERE code = ?");
+        $langStmt->execute([$langCode]);
+        $languageId = $langStmt->fetchColumn();
+        
+        if (!$languageId) {
+            echo json_encode(["error" => "Invalid language code."]);
+            exit;
+        }
+
+        $stmt = $conn->prepare("SELECT coins FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $coins = (int)$stmt->fetchColumn();
+
+        if ($coins < 60) {
+            echo json_encode(["error" => "Not enough coins."]);
+            exit;
+        }
+
+        $conn->beginTransaction();
+        try {
+            $updateStmt = $conn->prepare("UPDATE users SET coins = coins - 60 WHERE id = ?");
+            $updateStmt->execute([$userId]);
+
+            $stmt = $conn->prepare("SELECT id FROM user_progress WHERE user_id = ? AND language_id = ?");
+            $stmt->execute([$userId, $languageId]);
+            if (!$stmt->fetch()) {
+                $insertStmt = $conn->prepare("INSERT INTO user_progress (user_id, language_id, progress_percent) VALUES (?, ?, 0)");
+                $insertStmt->execute([$userId, $languageId]);
+            }
+
+            $conn->commit();
+            
+            $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, coins FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+            $userData['has_claimed_today'] = ($userData['last_reward_date'] === date('Y-m-d')); 
+            $userData['progress'] = getUserProgress($conn, $userData['id']);
+            $userData['badges'] = getUserBadges($conn, $userData['id']);
+            $userData['milestones'] = getUserMilestones($conn, $userData['id']);
+            
+            echo json_encode(["success" => true, "user" => $userData]);
+        } catch (Exception $e) {
+            $conn->rollBack();
+            echo json_encode(["error" => "Failed to unlock language."]);
+        }
         exit;
     }
 
@@ -455,7 +518,7 @@ try {
 
         $_SESSION['username'] = $newUsername;
 
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, coins FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
         $updatedUser['has_claimed_today'] = ($updatedUser['last_reward_date'] === date('Y-m-d')); $updatedUser['progress'] = getUserProgress($conn, $userId);
@@ -487,7 +550,7 @@ try {
         }
 
         // Return updated user stats
-        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, coins FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
         $updatedUser['has_claimed_today'] = ($updatedUser['last_reward_date'] === date('Y-m-d')); $updatedUser['progress'] = getUserProgress($conn, $userId);
