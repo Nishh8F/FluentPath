@@ -49,21 +49,9 @@ try {
         }
     }
 
-    // Initialize rate_limits table automatically
-    $conn->exec("CREATE TABLE IF NOT EXISTS login_attempts (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        ip_address VARCHAR(45) NOT NULL,
-        attempt_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-        INDEX(ip_address),
-        INDEX(attempt_time)
-    )");
+    // Auto-migration for login_attempts was completed.
 
-    // Auto-migrate to add last_reward_date if it doesn't exist
-    try {
-        $conn->exec("ALTER TABLE users ADD COLUMN last_reward_date DATE DEFAULT NULL");
-    } catch (PDOException $e) {
-        // Ignore error if column already exists
-    }
+    // Auto-migration for last_reward_date was completed.
 
     function checkRateLimit($conn, $ip) {
         // Clean up old records (older than 15 minutes)
