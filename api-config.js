@@ -1,7 +1,16 @@
 // API Configuration - Change this URL when deploying to GitHub Pages
 // For local development: http://localhost/FluentPath
 // For production: https://your-backend-api.herokuapp.com (or your backend URL)
-const API_BASE_URL = localStorage.getItem('fluentpath_api_url') || (
+let savedApiUrl = null;
+try {
+    if (window.localStorage) {
+        savedApiUrl = window.localStorage.getItem('fluentpath_api_url');
+    }
+} catch (e) {
+    // Ignore, WebView has storage disabled
+}
+
+const API_BASE_URL = savedApiUrl || (
     window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? window.location.origin + '/FluentPath'
         : '' // Use same origin for GitHub Pages

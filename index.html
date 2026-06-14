@@ -655,7 +655,12 @@
             const [currentUser, setCurrentUser] = useState(null);
             const [authChecking, setAuthChecking] = useState(true);
             const [theme, setTheme] = useState(() => {
-                const saved = localStorage.getItem('fluentpath_theme');
+                let saved = null;
+                try {
+                    if (window.localStorage) {
+                        saved = window.localStorage.getItem('fluentpath_theme');
+                    }
+                } catch (e) {}
                 if (saved) return saved;
                 return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             });
@@ -673,7 +678,11 @@
 
             useEffect(() => {
                 document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('fluentpath_theme', theme);
+                try {
+                    if (window.localStorage) {
+                        window.localStorage.setItem('fluentpath_theme', theme);
+                    }
+                } catch (e) {}
             }, [theme]);
 
             useEffect(() => {
