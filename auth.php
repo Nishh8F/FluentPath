@@ -412,7 +412,15 @@ try {
             }
         }
 
-        echo json_encode(["success" => true, "progress" => getUserProgress($conn, $userId)]);
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date, coins FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+        $userData['has_claimed_today'] = ($userData['last_reward_date'] === date('Y-m-d')); 
+        $userData['progress'] = getUserProgress($conn, $userData['id']);
+        $userData['badges'] = getUserBadges($conn, $userData['id']);
+        $userData['milestones'] = getUserMilestones($conn, $userData['id']);
+
+        echo json_encode(["success" => true, "progress" => $userData['progress'], "user" => $userData]);
         exit;
     }
 

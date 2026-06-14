@@ -1742,7 +1742,11 @@
                                     const res = await fetch(getApiUrl(`auth.php?action=save_progress&lang=${selectedLang.id}&increment=10`), { method: 'POST' });
                                     const data = await res.json();
                                     if (data.success && currentUser) {
-                                        setCurrentUser({ ...currentUser, progress: data.progress });
+                                        if (data.user) {
+                                            setCurrentUser(data.user);
+                                        } else {
+                                            setCurrentUser({ ...currentUser, progress: data.progress });
+                                        }
                                     }
                                 } catch (e) {
                                     console.error("Failed to save progress", e);
