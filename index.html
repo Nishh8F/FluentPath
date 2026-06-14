@@ -647,7 +647,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useRef } = React;
 
         const App = () => {
             const [currentView, setCurrentView] = useState('welcome'); // welcome, select, dashboard, lesson, login, register
@@ -676,6 +676,7 @@
                 }, 3000);
             };
 
+            const isInitialMount = useRef(true);
             useEffect(() => {
                 document.documentElement.setAttribute('data-theme', theme);
                 try {
@@ -683,6 +684,12 @@
                         window.localStorage.setItem('fluentpath_theme', theme);
                     }
                 } catch (e) {}
+
+                if (isInitialMount.current) {
+                    isInitialMount.current = false;
+                } else if (window.AppInventor) {
+                    window.AppInventor.setWebViewString("SAVE_THEME:" + theme);
+                }
             }, [theme]);
 
             useEffect(() => {
@@ -702,7 +709,22 @@
                 if (window.AppInventor) {
                     const msg = window.AppInventor.getWebViewString();
                     if (msg && msg.startsWith("LOAD_TOKEN:")) {
-                        const token = msg.split(":")[1];
+                        const parts = msg.split("|");
+                        const tokenPart = parts[0];
+                        const token = tokenPart.split(":")[1] || '';
+                        
+                        if (parts.length > 1 && parts[1].startsWith("THEME:")) {
+                            const savedTheme = parts[1].split(":")[1];
+                            if (savedTheme === 'dark' || savedTheme === 'light') {
+                                setTheme(savedTheme);
+                            }
+                        }
+
+                        if (!token) {
+                            checkSession();
+                            return;
+                        }
+
                         const formData = new FormData();
                         formData.append('auth_token', token);
                         
