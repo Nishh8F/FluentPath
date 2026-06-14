@@ -640,10 +640,68 @@
             cursor: pointer;
             font-weight: 500;
         }
+
+        /* Landscape Warning */
+        #landscape-warning {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 99999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        #landscape-warning i {
+            font-size: 64px;
+            color: var(--primary);
+            margin-bottom: 24px;
+            animation: rotateIcon 2s infinite ease-in-out;
+        }
+
+        @keyframes rotateIcon {
+            0% { transform: rotate(-90deg); }
+            50% { transform: rotate(0deg); }
+            100% { transform: rotate(-90deg); }
+        }
+
+        #landscape-warning h2 {
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        #landscape-warning p {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        /* Target mobile devices in landscape mode */
+        @media screen and (orientation: landscape) and (max-height: 600px) {
+            #root {
+                display: none !important;
+            }
+            #landscape-warning {
+                display: flex !important;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <div id="landscape-warning">
+        <i class="fas fa-mobile-alt"></i>
+        <h2>Please Rotate Device</h2>
+        <p>This app is designed to be used in portrait mode only.</p>
+    </div>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -1246,75 +1304,121 @@
                 );
             };
 
-            const SelectLanguageScreen = () => (
-                <div className="screen">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                        <h2 style={{ fontSize: '20px', margin: 0 }}>
-                            <i className="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> FluentPath
-                        </h2>
-                        <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
-                    </div>
+            const SelectLanguageScreen = () => {
+                const [searchQuery, setSearchQuery] = useState('');
 
-                    <div style={{ background: 'var(--card-bg)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '24px', display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}>
-                        <i className="fa-solid fa-search" style={{ marginRight: '12px' }}></i>
-                        Search languages or dialects...
-                    </div>
+                const localDialects = [
+                    {
+                        id: 'kelantan', title: 'Bahasa Melayu', sub: 'Kelantan (Kecek Kelate)',
+                        icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="300" height="150" fill="#DA251D" /><path d="M 150 75 A 30 30 0 1 1 180 45 A 35 35 0 1 0 165 105 Z" fill="white" /><polygon points="160,50 180,90 140,70 180,60 150,90" fill="white" /></svg>
+                    },
+                    {
+                        id: 'terengganu', title: 'Bahasa Melayu', sub: 'Terengganu (Ganu)',
+                        icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="300" height="150" fill="#ffffff" /><rect x="30" y="20" width="240" height="110" fill="#000000" /><path d="M 150 75 A 25 25 0 1 1 175 50 A 30 30 0 1 0 160 100 Z" fill="white" /></svg>
+                    },
+                    {
+                        id: 'perak', title: 'Bahasa Melayu', sub: 'Perak (Loghat Perak)',
+                        icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px', border: '1px solid #E5E7EB' }}><rect width="300" height="50" fill="#ffffff" /><rect y="50" width="300" height="50" fill="#fcd34d" /><rect y="100" width="300" height="50" fill="#000000" /></svg>
+                    },
+                    {
+                        id: 'selangor', title: 'Bahasa Melayu', sub: 'Selangor/KL (Standard Urban)',
+                        icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="150" height="75" fill="#DA251D" /><rect x="150" width="150" height="75" fill="#fcd34d" /><rect y="75" width="150" height="75" fill="#fcd34d" /><rect x="150" y="75" width="150" height="75" fill="#DA251D" /><path d="M 80 37.5 A 15 15 0 1 1 100 22.5 A 18 18 0 1 0 90 55 Z" fill="white" /></svg>
+                    },
+                    {
+                        id: 'utara', title: 'Bahasa Melayu', sub: 'Utara (Loghat Utara)',
+                        icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="300" height="150" fill="#DA251D" /><circle cx="60" cy="40" r="25" fill="#fcd34d" /><path d="M 60 40 A 20 20 0 1 1 80 20 A 25 25 0 1 0 70 60 Z" fill="#228b22" /></svg>
+                    }
+                ];
 
-                    <h3 className="section-header"><i className="fa-solid fa-location-dot"></i> Local Dialects</h3>
-                    {[
-                        {
-                            id: 'kelantan', title: 'Bahasa Melayu', sub: 'Kelantan (Kecek Kelate)',
-                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="300" height="150" fill="#DA251D" /><path d="M 150 75 A 30 30 0 1 1 180 45 A 35 35 0 1 0 165 105 Z" fill="white" /><polygon points="160,50 180,90 140,70 180,60 150,90" fill="white" /></svg>
-                        },
-                        {
-                            id: 'terengganu', title: 'Bahasa Melayu', sub: 'Terengganu (Ganu)',
-                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="300" height="150" fill="#ffffff" /><rect x="30" y="20" width="240" height="110" fill="#000000" /><path d="M 150 75 A 25 25 0 1 1 175 50 A 30 30 0 1 0 160 100 Z" fill="white" /></svg>
-                        },
-                        {
-                            id: 'perak', title: 'Bahasa Melayu', sub: 'Perak (Loghat Perak)',
-                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px', border: '1px solid #E5E7EB' }}><rect width="300" height="50" fill="#ffffff" /><rect y="50" width="300" height="50" fill="#fcd34d" /><rect y="100" width="300" height="50" fill="#000000" /></svg>
-                        },
-                        {
-                            id: 'selangor', title: 'Bahasa Melayu', sub: 'Selangor/KL (Standard Urban)',
-                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="150" height="75" fill="#DA251D" /><rect x="150" width="150" height="75" fill="#fcd34d" /><rect y="75" width="150" height="75" fill="#fcd34d" /><rect x="150" y="75" width="150" height="75" fill="#DA251D" /><path d="M 80 37.5 A 15 15 0 1 1 100 22.5 A 18 18 0 1 0 90 55 Z" fill="white" /></svg>
-                        },
-                        {
-                            id: 'utara', title: 'Bahasa Melayu', sub: 'Utara (Loghat Utara)',
-                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px' }}><rect width="300" height="150" fill="#DA251D" /><circle cx="60" cy="40" r="25" fill="#fcd34d" /><path d="M 60 40 A 20 20 0 1 1 80 20 A 25 25 0 1 0 70 60 Z" fill="#228b22" /></svg>
-                        }
-                    ].map(lang => (
-                        <div key={lang.id} className="lang-card" onClick={() => { setSelectedLang(lang); setCurrentView('dashboard'); }}>
-                            <div className="lang-icon">{lang.icon}</div>
-                            <div className="lang-info">
-                                <div className="lang-title">{lang.title}</div>
-                                <div className="lang-sub">{lang.sub}</div>
-                            </div>
-                            <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                const internationalLangs = [
+                    {
+                        id: 'english', title: 'English', sub: 'Global Communication',
+                        icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px', overflow: 'hidden' }}><rect width="300" height="150" fill="#012169" /><path d="M 0 0 L 300 150 M 0 150 L 300 0" stroke="white" strokeWidth="30" /><path d="M 0 0 L 300 150 M 0 150 L 300 0" stroke="#C8102E" strokeWidth="15" /><rect x="130" y="0" width="40" height="150" fill="white" /><rect x="0" y="55" width="300" height="40" fill="white" /><rect x="138" y="0" width="24" height="150" fill="#C8102E" /><rect x="0" y="63" width="300" height="24" fill="#C8102E" /></svg>
+                    },
+                    {
+                        id: 'russian', title: 'Russian', sub: 'Русский язык',
+                        icon: <svg viewBox="0 0 300 200" style={{ width: '100%', height: '100%', borderRadius: '8px', overflow: 'hidden' }}><rect width="300" height="200" fill="#000000" /><rect y="65" width="300" height="70" fill="#FACC15" /><polygon points="150,20 190,50 180,60 210,110 180,160 160,160 160,170 140,170 140,160 120,160 90,110 120,60 110,50" fill="#000000" stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" /><polygon points="150,35 153,45 163,45 155,51 158,61 150,55 142,61 145,51 137,45 147,45" fill="#ffffff" /><circle cx="138" cy="85" r="7" fill="#ffffff" /><polygon points="135,82 122,85 132,90" fill="#ffffff" /><circle cx="162" cy="85" r="7" fill="#ffffff" /><polygon points="165,82 178,85 168,90" fill="#ffffff" /><path d="M 138 90 L 150 100 L 162 90 L 165 115 L 135 115 Z" fill="#ffffff" /><path d="M 140 110 L 160 110 L 155 130 L 145 130 Z" fill="#ffffff" /><path d="M 135 95 C 110 85 100 115 100 125 C 115 120 125 110 135 110 Z" fill="#ffffff" /><path d="M 135 105 C 115 100 105 120 105 130 C 120 125 130 115 135 115 Z" fill="#ffffff" /><path d="M 165 95 C 190 85 200 115 200 125 C 185 120 175 110 165 110 Z" fill="#ffffff" /><path d="M 165 105 C 185 100 195 120 195 130 C 180 125 170 115 165 115 Z" fill="#ffffff" /><path d="M 145 130 L 155 130 L 160 145 L 155 140 L 150 150 L 145 140 L 140 145 Z" fill="#ffffff" /><rect x="135" y="125" width="4" height="15" fill="#ffffff" /><rect x="161" y="125" width="4" height="15" fill="#ffffff" /><path d="M 137 140 L 128 145 L 137 142 Z" fill="#ffffff" /><path d="M 163 140 L 172 145 L 163 142 Z" fill="#ffffff" /></svg>
+                    }
+                ];
+
+                const q = searchQuery.toLowerCase();
+                const filteredLocal = localDialects.filter(lang => 
+                    lang.title.toLowerCase().includes(q) || 
+                    lang.sub.toLowerCase().includes(q)
+                );
+                const filteredInternational = internationalLangs.filter(lang => 
+                    lang.title.toLowerCase().includes(q) || 
+                    lang.sub.toLowerCase().includes(q)
+                );
+
+                return (
+                    <div className="screen">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <h2 style={{ fontSize: '20px', margin: 0 }}>
+                                <i className="fa-solid fa-earth-asia" style={{ color: 'var(--primary)' }}></i> FluentPath
+                            </h2>
+                            <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
                         </div>
-                    ))}
 
-                    <h3 className="section-header"><i className="fa-solid fa-globe"></i> International</h3>
-                    {[
-                        {
-                            id: 'english', title: 'English', sub: 'Global Communication',
-                            icon: <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', borderRadius: '8px', overflow: 'hidden' }}><rect width="300" height="150" fill="#012169" /><path d="M 0 0 L 300 150 M 0 150 L 300 0" stroke="white" strokeWidth="30" /><path d="M 0 0 L 300 150 M 0 150 L 300 0" stroke="#C8102E" strokeWidth="15" /><rect x="130" y="0" width="40" height="150" fill="white" /><rect x="0" y="55" width="300" height="40" fill="white" /><rect x="138" y="0" width="24" height="150" fill="#C8102E" /><rect x="0" y="63" width="300" height="24" fill="#C8102E" /></svg>
-                        },
-                        {
-                            id: 'russian', title: 'Russian', sub: 'Русский язык',
-                            icon: <svg viewBox="0 0 300 200" style={{ width: '100%', height: '100%', borderRadius: '8px', overflow: 'hidden' }}><rect width="300" height="200" fill="#000000" /><rect y="65" width="300" height="70" fill="#FACC15" /><polygon points="150,20 190,50 180,60 210,110 180,160 160,160 160,170 140,170 140,160 120,160 90,110 120,60 110,50" fill="#000000" stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" /><polygon points="150,35 153,45 163,45 155,51 158,61 150,55 142,61 145,51 137,45 147,45" fill="#ffffff" /><circle cx="138" cy="85" r="7" fill="#ffffff" /><polygon points="135,82 122,85 132,90" fill="#ffffff" /><circle cx="162" cy="85" r="7" fill="#ffffff" /><polygon points="165,82 178,85 168,90" fill="#ffffff" /><path d="M 138 90 L 150 100 L 162 90 L 165 115 L 135 115 Z" fill="#ffffff" /><path d="M 140 110 L 160 110 L 155 130 L 145 130 Z" fill="#ffffff" /><path d="M 135 95 C 110 85 100 115 100 125 C 115 120 125 110 135 110 Z" fill="#ffffff" /><path d="M 135 105 C 115 100 105 120 105 130 C 120 125 130 115 135 115 Z" fill="#ffffff" /><path d="M 165 95 C 190 85 200 115 200 125 C 185 120 175 110 165 110 Z" fill="#ffffff" /><path d="M 165 105 C 185 100 195 120 195 130 C 180 125 170 115 165 115 Z" fill="#ffffff" /><path d="M 145 130 L 155 130 L 160 145 L 155 140 L 150 150 L 145 140 L 140 145 Z" fill="#ffffff" /><rect x="135" y="125" width="4" height="15" fill="#ffffff" /><rect x="161" y="125" width="4" height="15" fill="#ffffff" /><path d="M 137 140 L 128 145 L 137 142 Z" fill="#ffffff" /><path d="M 163 140 L 172 145 L 163 142 Z" fill="#ffffff" /></svg>
-                        }
-                    ].map(lang => (
-                        <div key={lang.id} className="lang-card" onClick={() => { setSelectedLang(lang); setCurrentView('dashboard'); }}>
-                            <div className="lang-icon">{lang.icon}</div>
-                            <div className="lang-info">
-                                <div className="lang-title">{lang.title}</div>
-                                <div className="lang-sub">{lang.sub}</div>
-                            </div>
-                            <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                        <div style={{ background: 'var(--card-bg)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '24px', display: 'flex', alignItems: 'center', color: 'var(--text-dark)' }}>
+                            <i className="fa-solid fa-search" style={{ marginRight: '12px', color: 'var(--text-muted)' }}></i>
+                            <input 
+                                type="text"
+                                placeholder="Search languages or dialects..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                style={{
+                                    border: 'none',
+                                    background: 'transparent',
+                                    outline: 'none',
+                                    width: '100%',
+                                    fontSize: '15px',
+                                    color: 'var(--text-dark)',
+                                    fontFamily: 'inherit'
+                                }}
+                            />
                         </div>
-                    ))}
-                </div>
-            );
+
+                        {filteredLocal.length > 0 && (
+                            <>
+                                <h3 className="section-header"><i className="fa-solid fa-location-dot"></i> Local Dialects</h3>
+                                {filteredLocal.map(lang => (
+                                    <div key={lang.id} className="lang-card" onClick={() => { setSelectedLang(lang); setCurrentView('dashboard'); }}>
+                                        <div className="lang-icon">{lang.icon}</div>
+                                        <div className="lang-info">
+                                            <div className="lang-title">{lang.title}</div>
+                                            <div className="lang-sub">{lang.sub}</div>
+                                        </div>
+                                        <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                                    </div>
+                                ))}
+                            </>
+                        )}
+
+                        {filteredInternational.length > 0 && (
+                            <>
+                                <h3 className="section-header"><i className="fa-solid fa-globe"></i> International</h3>
+                                {filteredInternational.map(lang => (
+                                    <div key={lang.id} className="lang-card" onClick={() => { setSelectedLang(lang); setCurrentView('dashboard'); }}>
+                                        <div className="lang-icon">{lang.icon}</div>
+                                        <div className="lang-info">
+                                            <div className="lang-title">{lang.title}</div>
+                                            <div className="lang-sub">{lang.sub}</div>
+                                        </div>
+                                        <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                                    </div>
+                                ))}
+                            </>
+                        )}
+
+                        {filteredLocal.length === 0 && filteredInternational.length === 0 && (
+                            <div style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '40px' }}>
+                                No languages found matching "{searchQuery}"
+                            </div>
+                        )}
+                    </div>
+                );
+            };
 
             const DashboardScreen = () => {
                 const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
