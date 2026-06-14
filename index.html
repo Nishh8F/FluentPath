@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FluentPath UI</title>
 
+    <!-- Global Error Handler for WebViews -->
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            alert("Error: " + message + " at line " + lineno);
+            return false;
+        };
+    </script>
+
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
