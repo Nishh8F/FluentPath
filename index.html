@@ -702,16 +702,30 @@
                 if (!currentUser) return;
                 
                 // Check if user already has the Milk Shake badge
-                const hasMilkShakeBadge = currentUser.badges?.some(b => b.title === 'Milk Shake');
+                const hasMilkShakeBadge = currentUser.badges?.some(b => b.title === 'Shake Master' || b.title === 'Milk Shake');
                 if (hasMilkShakeBadge) return;
 
                 let lastX = null, lastY = null, lastZ = null;
                 const threshold = 18; // Slightly harder shake for the easter egg
                 let isAwarding = false; // Prevent multiple triggers
 
-                const handleGlobalMotion = (event) => {
+                const triggerEasterEgg = () => {
                     if (isAwarding) return;
-                    
+                    isAwarding = true;
+                    // Trigger backend award
+                    fetch(getApiUrl('auth.php?action=award_easter_egg'))
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                setCurrentUser(data.user);
+                                showToast('Easter Egg Found! You earned the Shake Master badge! 🍼', 'success');
+                            }
+                        })
+                        .catch(console.error);
+                };
+
+                // 1. Native Web DeviceMotion (iOS/Android Browsers)
+                const handleGlobalMotion = (event) => {
                     const { accelerationIncludingGravity } = event;
                     if (!accelerationIncludingGravity) return;
 
@@ -723,17 +737,7 @@
                         const deltaZ = Math.abs(lastZ - z);
 
                         if (deltaX + deltaY + deltaZ > threshold) {
-                            isAwarding = true;
-                            // Trigger backend award
-                            fetch(getApiUrl('auth.php?action=award_easter_egg'))
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        setCurrentUser(data.user);
-                                        showToast('Easter Egg Found! You earned the Milk Shake badge! 🥤', 'success');
-                                    }
-                                })
-                                .catch(console.error);
+                            triggerEasterEgg();
                         }
                     }
 
@@ -743,8 +747,22 @@
                 };
 
                 window.addEventListener('devicemotion', handleGlobalMotion);
+
+                // 2. MIT App Inventor Bridge polling
+                const appInventorInterval = setInterval(() => {
+                    if (window.AppInventor) {
+                        const msg = window.AppInventor.getWebViewString();
+                        if (msg === "SHAKE") {
+                            triggerEasterEgg();
+                            // Clear the string so it doesn't trigger repeatedly
+                            window.AppInventor.setWebViewString("RECEIVED");
+                        }
+                    }
+                }, 500);
+
                 return () => {
                     window.removeEventListener('devicemotion', handleGlobalMotion);
+                    clearInterval(appInventorInterval);
                 };
             }, [currentUser]);
 

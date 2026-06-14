@@ -177,6 +177,46 @@ try {
         exit;
     }
 
+    if ($action === 'award_easter_egg') {
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(["error" => "Not authenticated."]);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        
+        // Check if they already have the badge
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM user_badges WHERE user_id = ? AND title = 'Shake Master'");
+        $stmt->execute([$userId]);
+        if ($stmt->fetchColumn() > 0) {
+            echo json_encode(["message" => "already_awarded"]);
+            exit;
+        }
+
+        // Award badge
+        $badgeTitle = "Shake Master";
+        $badgeDesc = "Unlocked by discovering the hidden physical interaction secret!";
+        $badgeIcon = "fa-mobile-screen";
+        $stmt = $conn->prepare("INSERT INTO user_badges (user_id, title, description, icon) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$userId, $badgeTitle, $badgeDesc, $badgeIcon]);
+
+        // Award 50 XP
+        $stmt = $conn->prepare("UPDATE users SET total_xp = total_xp + 50 WHERE id = ?");
+        $stmt->execute([$userId]);
+
+        // Return updated user data
+        $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $userData['progress'] = getUserProgress($conn, $userData['id']);
+        $userData['badges'] = getUserBadges($conn, $userData['id']);
+        $userData['milestones'] = getUserMilestones($conn, $userData['id']);
+        
+        echo json_encode(["success" => true, "user" => $userData]);
+        exit;
+    }
+
     if ($action === 'logout') {
         session_destroy();
         echo json_encode(["success" => true]);
