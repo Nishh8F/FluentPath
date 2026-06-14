@@ -58,6 +58,13 @@ try {
         INDEX(attempt_time)
     )");
 
+    // Auto-migrate to add last_reward_date if it doesn't exist
+    try {
+        $conn->exec("ALTER TABLE users ADD COLUMN last_reward_date DATE DEFAULT NULL");
+    } catch (PDOException $e) {
+        // Ignore error if column already exists
+    }
+
     function checkRateLimit($conn, $ip) {
         // Clean up old records (older than 15 minutes)
         $conn->exec("DELETE FROM login_attempts WHERE attempt_time < NOW() - INTERVAL 15 MINUTE");
