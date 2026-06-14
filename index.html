@@ -1500,15 +1500,33 @@
 
                     {/* Day Streak */}
                     <div 
-                        style={{ background: '#114C3D', borderRadius: '16px', padding: '24px', color: 'white', textAlign: 'center', marginBottom: '24px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '140px', boxShadow: '0 8px 24px rgba(17, 76, 61, 0.2)', cursor: 'pointer' }}
+                        style={{ 
+                            background: hasClaimedToday ? 'var(--card-bg)' : '#114C3D', 
+                            borderRadius: '16px', 
+                            padding: '24px', 
+                            color: hasClaimedToday ? 'var(--text-muted)' : 'white', 
+                            textAlign: 'center', 
+                            marginBottom: '24px', 
+                            position: 'relative', 
+                            overflow: 'hidden', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            height: '140px', 
+                            boxShadow: hasClaimedToday ? 'none' : '0 8px 24px rgba(17, 76, 61, 0.2)', 
+                            border: hasClaimedToday ? '1px solid var(--border-color)' : 'none',
+                            cursor: hasClaimedToday ? 'default' : 'pointer',
+                            opacity: hasClaimedToday ? 0.7 : 1
+                        }}
                         onClick={() => {
                             if (!hasClaimedToday) setCurrentView('reward');
                         }}
                     >
                         <div style={{ position: 'relative', zIndex: 1 }}>
-                            <h2 style={{ fontSize: '32px', margin: '0 0 2px 0', fontWeight: '800' }}>{userStreak}</h2>
-                            <p style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 12px 0' }}>Day Streak</p>
-                            <div style={{ fontSize: '10px', opacity: 0.9, fontWeight: '600' }}>
+                            <h2 style={{ fontSize: '32px', margin: '0 0 2px 0', fontWeight: '800', color: hasClaimedToday ? 'var(--text-dark)' : 'white' }}>{userStreak}</h2>
+                            <p style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 12px 0', color: hasClaimedToday ? 'var(--text-dark)' : 'white' }}>Day Streak</p>
+                            <div style={{ fontSize: '10px', fontWeight: '600', color: hasClaimedToday ? 'var(--text-muted)' : 'rgba(255,255,255,0.9)' }}>
                                 {hasClaimedToday ? 'Reward claimed today! Come back tomorrow.' : 'Claim your daily reward now!'}
                             </div>
                         </div>
