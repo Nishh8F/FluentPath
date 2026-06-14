@@ -1442,8 +1442,7 @@
 
                 const currentProgress = currentUser?.progress?.[selectedLang?.id] || 0;
                 const userStreak = currentUser?.current_streak || 0;
-                const todayStr = new Date().toISOString().split('T')[0];
-                const hasClaimedToday = currentUser?.last_reward_date === todayStr;
+                const hasClaimedToday = currentUser?.has_claimed_today;
                 const nextRewardDays = 3 - (userStreak % 3);
                 
                 let masteryLevel = "Beginner Mastery";

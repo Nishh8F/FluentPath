@@ -156,7 +156,7 @@ try {
             $_SESSION['user_id'] = $userData['id'];
             $_SESSION['username'] = $userData['username'];
             
-            $userData['progress'] = getUserProgress($conn, $userData['id']);
+            $userData['has_claimed_today'] = ($userData['last_reward_date'] === date('Y-m-d')); $userData['progress'] = getUserProgress($conn, $userData['id']);
             $userData['badges'] = getUserBadges($conn, $userData['id']);
             $userData['milestones'] = getUserMilestones($conn, $userData['id']);
             
@@ -205,7 +205,7 @@ try {
             // Remove password from response
             unset($userData['password']);
             
-            $userData['progress'] = getUserProgress($conn, $userData['id']);
+            $userData['has_claimed_today'] = ($userData['last_reward_date'] === date('Y-m-d')); $userData['progress'] = getUserProgress($conn, $userData['id']);
             $userData['badges'] = getUserBadges($conn, $userData['id']);
             $userData['milestones'] = getUserMilestones($conn, $userData['id']);
             
@@ -249,7 +249,7 @@ try {
         $stmt->execute([$userId]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        $userData['progress'] = getUserProgress($conn, $userData['id']);
+        $userData['has_claimed_today'] = ($userData['last_reward_date'] === date('Y-m-d')); $userData['progress'] = getUserProgress($conn, $userData['id']);
         $userData['badges'] = getUserBadges($conn, $userData['id']);
         $userData['milestones'] = getUserMilestones($conn, $userData['id']);
         
@@ -284,7 +284,7 @@ try {
         $stmt->execute([$userId]);
         $userData = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        $userData['progress'] = getUserProgress($conn, $userData['id']);
+        $userData['has_claimed_today'] = ($userData['last_reward_date'] === date('Y-m-d')); $userData['progress'] = getUserProgress($conn, $userData['id']);
         $userData['badges'] = getUserBadges($conn, $userData['id']);
         $userData['milestones'] = getUserMilestones($conn, $userData['id']);
         
@@ -305,7 +305,7 @@ try {
             $userData = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($userData) {
-                $userData['progress'] = getUserProgress($conn, $userData['id']);
+                $userData['has_claimed_today'] = ($userData['last_reward_date'] === date('Y-m-d')); $userData['progress'] = getUserProgress($conn, $userData['id']);
                 $userData['badges'] = getUserBadges($conn, $userData['id']);
                 $userData['milestones'] = getUserMilestones($conn, $userData['id']);
                 echo json_encode(["success" => true, "user" => $userData]);
@@ -474,7 +474,7 @@ try {
         $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
-        $updatedUser['progress'] = getUserProgress($conn, $userId);
+        $updatedUser['has_claimed_today'] = ($updatedUser['last_reward_date'] === date('Y-m-d')); $updatedUser['progress'] = getUserProgress($conn, $userId);
         $updatedUser['badges'] = getUserBadges($conn, $userId);
         $updatedUser['milestones'] = getUserMilestones($conn, $userId);
 
@@ -506,7 +506,7 @@ try {
         $stmt = $conn->prepare("SELECT id, username, name, bio, birthday, profile_picture, lessons_done, total_xp, daily_xp, current_streak, last_activity_date, last_reward_date FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
-        $updatedUser['progress'] = getUserProgress($conn, $userId);
+        $updatedUser['has_claimed_today'] = ($updatedUser['last_reward_date'] === date('Y-m-d')); $updatedUser['progress'] = getUserProgress($conn, $userId);
         $updatedUser['badges'] = getUserBadges($conn, $userId);
         $updatedUser['milestones'] = getUserMilestones($conn, $userId);
 
