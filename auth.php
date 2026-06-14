@@ -49,9 +49,32 @@ try {
         }
     }
 
-    // Auto-migration for login_attempts was completed.
+    // Initialize rate_limits table automatically
+    try {
+        $conn->query("SELECT 1 FROM login_attempts LIMIT 1");
+    } catch (PDOException $e) {
+        try {
+            $conn->exec("CREATE TABLE IF NOT EXISTS login_attempts (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                ip_address VARCHAR(45) NOT NULL,
+                attempt_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+                INDEX(ip_address),
+                INDEX(attempt_time)
+            )");
+        } catch (PDOException $ex) {}
+    }
 
-    // Auto-migration for last_reward_date was completed.
+    // Safe auto-migration for columns
+    try {
+        $conn->query("SELECT last_reward_date, coins FROM users LIMIT 1");
+    } catch (PDOException $e) {
+        try {
+            $conn->exec("ALTER TABLE users ADD COLUMN last_reward_date DATE DEFAULT NULL");
+        } catch (PDOException $ex) {}
+        try {
+            $conn->exec("ALTER TABLE users ADD COLUMN coins INT DEFAULT 100");
+        } catch (PDOException $ex) {}
+    }
 
     function checkRateLimit($conn, $ip) {
         // Clean up old records (older than 15 minutes)
