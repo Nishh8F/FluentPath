@@ -570,7 +570,7 @@ try {
 
         $conn->beginTransaction();
         try {
-            $conn->prepare("DELETE FROM progress WHERE user_id = ?")->execute([$userId]);
+            $conn->prepare("DELETE FROM user_progress WHERE user_id = ?")->execute([$userId]);
             $conn->prepare("DELETE FROM user_badges WHERE user_id = ?")->execute([$userId]);
             $conn->prepare("DELETE FROM user_milestones WHERE user_id = ?")->execute([$userId]);
             $conn->prepare("DELETE FROM users WHERE id = ?")->execute([$userId]);

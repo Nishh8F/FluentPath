@@ -2071,7 +2071,6 @@
                         if (data.success) {
                             setCurrentUser(null);
                             setCurrentView('welcome');
-                            showToast("Account deleted successfully.", "success");
                         } else {
                             showToast(data.error || "Failed to delete account.", "error");
                         }
