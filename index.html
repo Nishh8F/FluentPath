@@ -806,7 +806,12 @@
                 return (
                     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', background: 'var(--bg-color)', overflowY: 'auto' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', position: 'sticky', top: 0, zIndex: 10, background: 'var(--bg-color)' }}>
-                            <i className="fa-solid fa-arrow-left" style={{ fontSize: '20px', cursor: 'pointer', padding: '8px', marginLeft: '-8px' }} onClick={() => setCurrentView('dashboard')}></i>
+                            <div 
+                                style={{ width: '36px', height: '36px', background: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                                onClick={() => setCurrentView('dashboard')}
+                            >
+                                <i className="fa-solid fa-arrow-left" style={{ fontSize: '16px', color: '#1E293B' }}></i>
+                            </div>
                             <h2 style={{ fontSize: '18px', margin: 0, fontWeight: '700' }}>{topic} Vocabularies</h2>
                             <div style={{ width: '36px' }}></div>
                         </div>
