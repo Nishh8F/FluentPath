@@ -2044,6 +2044,30 @@
                 const [previewUrl, setPreviewUrl] = useState(currentUser?.profile_picture || null);
                 const [error, setError] = useState('');
                 const [isSaving, setIsSaving] = useState(false);
+                const [deleteCountdown, setDeleteCountdown] = useState(null);
+
+                useEffect(() => {
+                    if (deleteCountdown !== null && deleteCountdown > 0) {
+                        const timer = setTimeout(() => setDeleteCountdown(deleteCountdown - 1), 1000);
+                        return () => clearTimeout(timer);
+                    }
+                }, [deleteCountdown]);
+
+                const handleDeleteAccount = async () => {
+                    try {
+                        const res = await fetch(getApiUrl('auth.php?action=delete_account'), { method: 'POST' });
+                        const data = await res.json();
+                        if (data.success) {
+                            setCurrentUser(null);
+                            setCurrentView('welcome');
+                            showToast("Account deleted successfully.", "success");
+                        } else {
+                            showToast(data.error || "Failed to delete account.", "error");
+                        }
+                    } catch (err) {
+                        showToast("Connection failed.", "error");
+                    }
+                };
 
                 const handleLogout = async () => {
                     await fetch(getApiUrl('auth.php?action=logout'));
@@ -2305,6 +2329,21 @@
                             <button className="btn" style={{ background: '#FEE2E2', color: '#DC2626', width: '100%', display: 'flex', justifyContent: 'center', border: '1px solid #FCA5A5' }} onClick={handleLogout}>
                                 <i className="fa-solid fa-arrow-right-from-bracket" style={{ marginRight: '8px' }}></i> Log Out
                             </button>
+                            <div style={{ marginTop: '16px' }}>
+                                {deleteCountdown === null ? (
+                                    <button className="btn" style={{ background: 'transparent', color: '#DC2626', width: '100%', display: 'flex', justifyContent: 'center', border: '1px solid #DC2626' }} onClick={() => setDeleteCountdown(5)}>
+                                        <i className="fa-solid fa-trash" style={{ marginRight: '8px' }}></i> Delete Account
+                                    </button>
+                                ) : deleteCountdown > 0 ? (
+                                    <button className="btn" style={{ background: '#FCA5A5', color: '#7F1D1D', width: '100%', display: 'flex', justifyContent: 'center', border: '1px solid #DC2626', cursor: 'not-allowed' }} disabled>
+                                        <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: '8px' }}></i> Confirm Deletion in {deleteCountdown}s
+                                    </button>
+                                ) : (
+                                    <button className="btn" style={{ background: '#DC2626', color: 'white', width: '100%', display: 'flex', justifyContent: 'center', border: '1px solid #991B1B' }} onClick={handleDeleteAccount}>
+                                        <i className="fa-solid fa-trash" style={{ marginRight: '8px' }}></i> Click to Confirm Delete
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 );

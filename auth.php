@@ -560,6 +560,30 @@ try {
         exit;
     }
 
+    if ($action === 'delete_account') {
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(["error" => "Not authenticated."]);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+
+        $conn->beginTransaction();
+        try {
+            $conn->prepare("DELETE FROM progress WHERE user_id = ?")->execute([$userId]);
+            $conn->prepare("DELETE FROM user_badges WHERE user_id = ?")->execute([$userId]);
+            $conn->prepare("DELETE FROM milestones WHERE user_id = ?")->execute([$userId]);
+            $conn->prepare("DELETE FROM users WHERE id = ?")->execute([$userId]);
+            $conn->commit();
+            session_destroy();
+            echo json_encode(["success" => true]);
+        } catch (Exception $e) {
+            $conn->rollBack();
+            echo json_encode(["error" => "Failed to delete account."]);
+        }
+        exit;
+    }
+
     if ($action === 'award_easter_egg') {
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(["error" => "Not logged in."]);
