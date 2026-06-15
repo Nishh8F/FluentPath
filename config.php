@@ -23,7 +23,7 @@ $db_host = "$host;port=$port";
 function getDBConnection() {
     global $db_host, $db_name, $username, $password;
     try {
-        $conn = new PDO("mysql:host=$db_host;dbname=$db_name", $username, $password);
+        $conn = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $conn;
     } catch(PDOException $exception) {
