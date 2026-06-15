@@ -726,12 +726,147 @@
             const [leaderboardData, setLeaderboardData] = useState([]);
             const [leaderboardUser, setLeaderboardUser] = useState(null);
             const [loadingLeaderboard, setLoadingLeaderboard] = useState(false);
+            const [selectedTopic, setSelectedTopic] = useState('');
 
             const showToast = (message, type = 'info') => {
                 setToast({ show: true, message, type });
                 setTimeout(() => {
                     setToast(prev => ({ ...prev, show: false }));
                 }, 3000);
+            };
+
+            const speakText = (text, langId) => {
+                if (!window.speechSynthesis) return;
+                const synth = window.speechSynthesis;
+                const ut = new SpeechSynthesisUtterance(text);
+                const langMap = {
+                    english: 'en-US',
+                    russian: 'ru-RU',
+                    kelantan: 'ms-MY',
+                    terengganu: 'ms-MY',
+                    perak: 'ms-MY',
+                    selangor: 'ms-MY',
+                    utara: 'ms-MY'
+                };
+                const targetLang = langMap[langId] || 'ms-MY';
+                ut.lang = targetLang;
+                
+                const voices = synth.getVoices();
+                if (voices.length > 0) {
+                    const preferredVoices = voices.filter(v => v.lang.startsWith(targetLang.split('-')[0]) && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium') || v.name.includes('Online')));
+                    if (preferredVoices.length > 0) {
+                        ut.voice = preferredVoices[0];
+                    } else {
+                        const matchingVoices = voices.filter(v => v.lang.startsWith(targetLang.split('-')[0]));
+                        if (matchingVoices.length > 0) {
+                            ut.voice = matchingVoices[0];
+                        }
+                    }
+                }
+                
+                ut.rate = 0.9;
+                ut.pitch = 1.0;
+                
+                synth.cancel();
+                synth.speak(ut);
+            };
+
+            useEffect(() => {
+                if (window.speechSynthesis) {
+                    window.speechSynthesis.getVoices();
+                }
+            }, []);
+
+            const VocabScreen = ({ topic }) => {
+                const [vocabList, setVocabList] = useState([]);
+                
+                useEffect(() => {
+                    const data = {
+                        'Greetings': [
+                            { word: 'Hello', meaning: 'Standard greeting', example: 'Hello, how are you?' },
+                            { word: 'Good morning', meaning: 'Morning greeting', example: 'Good morning everyone.' },
+                            { word: 'How are you?', meaning: 'Asking about well-being', example: 'How are you doing today?' },
+                            { word: 'Good evening', meaning: 'Evening greeting', example: 'Good evening to all of you.' },
+                            { word: 'Goodbye', meaning: 'Farewell', example: 'Goodbye, see you soon.' },
+                            { word: 'Nice to meet you', meaning: 'Polite expression', example: 'It is very nice to meet you.' },
+                            { word: 'Welcome', meaning: 'Greeting for arrival', example: 'Welcome to our country!' },
+                            { word: 'Have a good day', meaning: 'Wishing well', example: 'Thanks, have a good day.' },
+                            { word: 'See you later', meaning: 'Casual farewell', example: 'I must go, see you later.' },
+                            { word: 'What\'s up?', meaning: 'Casual greeting', example: 'Hey there, what\'s up?' }
+                        ],
+                        'Food': [
+                            { word: 'Rice', meaning: 'Staple food', example: 'I eat rice every day.' },
+                            { word: 'Water', meaning: 'Drink', example: 'Can I get some water?' },
+                            { word: 'Chicken', meaning: 'Meat', example: 'I would like some grilled chicken.' },
+                            { word: 'Spicy', meaning: 'Taste profile', example: 'Is this dish very spicy?' },
+                            { word: 'Delicious', meaning: 'Tastes good', example: 'This food is delicious!' },
+                            { word: 'Menu', meaning: 'List of food', example: 'Can I see the menu, please?' },
+                            { word: 'Vegetables', meaning: 'Healthy food', example: 'I want extra vegetables.' },
+                            { word: 'Dessert', meaning: 'Sweet dish', example: 'What is for dessert?' },
+                            { word: 'Bill', meaning: 'Check/Receipt', example: 'Can I have the bill, please?' },
+                            { word: 'Hungry', meaning: 'Wanting food', example: 'I am very hungry right now.' },
+                            { word: 'Breakfast', meaning: 'Morning meal', example: 'I had eggs for breakfast.' },
+                            { word: 'Dinner', meaning: 'Evening meal', example: 'Let us have dinner together.' },
+                            { word: 'Drink', meaning: 'Beverage', example: 'What would you like to drink?' },
+                            { word: 'Sweet', meaning: 'Sugary taste', example: 'This cake is very sweet.' },
+                            { word: 'Sour', meaning: 'Acidic taste', example: 'The soup is a bit sour.' }
+                        ],
+                        'Travel': [
+                            { word: 'Airport', meaning: 'Place for airplanes', example: 'Where is the airport?' },
+                            { word: 'Taxi', meaning: 'Vehicle for hire', example: 'Call a taxi please.' },
+                            { word: 'Hotel', meaning: 'Accommodation', example: 'I have booked a hotel.' },
+                            { word: 'Ticket', meaning: 'Pass for travel', example: 'I bought a train ticket.' },
+                            { word: 'Passport', meaning: 'Travel document', example: 'Do not forget your passport.' },
+                            { word: 'Luggage', meaning: 'Baggage', example: 'My luggage is very heavy.' },
+                            { word: 'Map', meaning: 'Navigation guide', example: 'Can you show me on the map?' },
+                            { word: 'Station', meaning: 'Transport stop', example: 'How far is the train station?' },
+                            { word: 'Bus', meaning: 'Public transport', example: 'I will take the bus.' },
+                            { word: 'Delay', meaning: 'Late departure', example: 'Our flight has a delay.' },
+                            { word: 'Arrival', meaning: 'Reaching destination', example: 'What is the arrival time?' },
+                            { word: 'Departure', meaning: 'Leaving place', example: 'The departure is at noon.' },
+                            { word: 'Tour', meaning: 'Guided trip', example: 'We joined a city tour.' },
+                            { word: 'Guide', meaning: 'Tour leader', example: 'Our guide was very helpful.' },
+                            { word: 'Souvenir', meaning: 'Gift', example: 'I bought a souvenir for you.' },
+                            { word: 'Beach', meaning: 'Coastal area', example: 'We relaxed at the beach.' },
+                            { word: 'Mountain', meaning: 'High land', example: 'We hiked up the mountain.' },
+                            { word: 'Camera', meaning: 'Photo device', example: 'I took photos with my camera.' },
+                            { word: 'Reservation', meaning: 'Booking', example: 'I have a dinner reservation.' },
+                            { word: 'Help', meaning: 'Assistance', example: 'Can you help me?' }
+                        ]
+                    };
+                    setVocabList(data[topic] || []);
+                }, [topic]);
+
+                return (
+                    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', background: 'var(--bg-color)', overflowY: 'auto' }}>
+                        <div className="navbar" style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--bg-color)' }}>
+                            <i className="fa-solid fa-arrow-left" style={{ fontSize: '20px', cursor: 'pointer' }} onClick={() => setCurrentView('dashboard')}></i>
+                            <h2 style={{ fontSize: '18px', margin: 0, fontWeight: '700' }}>{topic} Vocabularies</h2>
+                            <div style={{ width: '20px' }}></div>
+                        </div>
+                        <div style={{ padding: '20px', paddingBottom: '40px' }}>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '20px' }}>Essential words to help you with {topic}.</p>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                {vocabList.map((v, i) => (
+                                    <div key={i} style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border-color)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                                            <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--primary)', fontWeight: 'bold' }}>{v.word}</h3>
+                                            <div 
+                                                style={{ width: '32px', height: '32px', background: '#E0F2FE', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                                                onClick={() => speakText(v.word, selectedLang?.id)}
+                                            >
+                                                <i className="fa-solid fa-volume-high" style={{ color: '#0369A1', fontSize: '14px' }}></i>
+                                            </div>
+                                        </div>
+                                        <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', fontSize: '14px', color: 'var(--text-dark)' }}>{v.meaning}</p>
+                                        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', fontStyle: 'italic', borderLeft: '3px solid var(--primary)', paddingLeft: '8px', opacity: 0.8 }}>"{v.example}"</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
             };
 
             const isInitialMount = useRef(true);
@@ -1638,7 +1773,7 @@
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                             <div 
                                 style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
-                                onClick={() => showToast('Topic coming soon!', 'info')}
+                                onClick={() => { setSelectedTopic('Greetings'); setCurrentView('vocab'); }}
                             >
                                 <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
                                     <i className="fa-solid fa-hand-sparkles"></i>
@@ -1652,7 +1787,7 @@
                             </div>
                             <div 
                                 style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
-                                onClick={() => showToast('Topic coming soon!', 'info')}
+                                onClick={() => { setSelectedTopic('Food'); setCurrentView('vocab'); }}
                             >
                                 <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
                                     <i className="fa-solid fa-bowl-food"></i>
@@ -1667,7 +1802,7 @@
                         </div>
                         <div 
                             style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
-                            onClick={() => showToast('Topic coming soon!', 'info')}
+                            onClick={() => { setSelectedTopic('Travel'); setCurrentView('vocab'); }}
                         >
                             <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
                                 <i className="fa-solid fa-plane"></i>
@@ -2428,6 +2563,7 @@
                     {currentView === 'select' && <SelectLanguageScreen />}
                     {currentView === 'dashboard' && <DashboardScreen />}
                     {currentView === 'lesson' && <LessonScreen />}
+                    {currentView === 'vocab' && <VocabScreen topic={selectedTopic} />}
                     {currentView === 'profile' && <ProfileScreen />}
                     {currentView === 'reward' && <RewardScreen />}
                     {currentView === 'leaderboard' && <LeaderboardScreen />}
