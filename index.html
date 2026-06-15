@@ -1184,6 +1184,17 @@
                 const [error, setError] = useState('');
                 const [showPassword, setShowPassword] = useState(false);
 
+                const getPasswordStrength = (pass) => {
+                    if (!pass) return 0;
+                    let strength = 0;
+                    if (pass.length > 0) strength = 1;
+                    if (pass.length >= 6) strength = 2;
+                    if (pass.length >= 8 && /[0-9]/.test(pass)) strength = 3;
+                    if (pass.length >= 8 && /[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass)) strength = 4;
+                    return strength;
+                };
+                const passwordStrength = getPasswordStrength(password);
+
                 const handleRegister = async (e) => {
                     e.preventDefault();
                     setError('');
@@ -1276,10 +1287,10 @@
                                         <i className={`fa-regular ${showPassword ? 'fa-eye-slash' : 'fa-eye'} eye-icon`} onClick={() => setShowPassword(!showPassword)}></i>
                                     </div>
                                     <div className="strength-bars">
-                                        <div className="s-bar active"></div>
-                                        <div className="s-bar active"></div>
-                                        <div className="s-bar"></div>
-                                        <div className="s-bar"></div>
+                                        <div className={`s-bar ${passwordStrength >= 1 ? 'active' : ''}`}></div>
+                                        <div className={`s-bar ${passwordStrength >= 2 ? 'active' : ''}`}></div>
+                                        <div className={`s-bar ${passwordStrength >= 3 ? 'active' : ''}`}></div>
+                                        <div className={`s-bar ${passwordStrength >= 4 ? 'active' : ''}`}></div>
                                     </div>
                                 </div>
 
