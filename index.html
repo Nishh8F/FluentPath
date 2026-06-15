@@ -1728,10 +1728,34 @@
                         selangor: 'ms-MY',
                         utara: 'ms-MY'
                     };
-                    ut.lang = langMap[langId] || 'ms-MY';
+                    const targetLang = langMap[langId] || 'ms-MY';
+                    ut.lang = targetLang;
+                    
+                    const voices = synth.getVoices();
+                    if (voices.length > 0) {
+                        const preferredVoices = voices.filter(v => v.lang.startsWith(targetLang.split('-')[0]) && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium') || v.name.includes('Online')));
+                        if (preferredVoices.length > 0) {
+                            ut.voice = preferredVoices[0];
+                        } else {
+                            const matchingVoices = voices.filter(v => v.lang.startsWith(targetLang.split('-')[0]));
+                            if (matchingVoices.length > 0) {
+                                ut.voice = matchingVoices[0];
+                            }
+                        }
+                    }
+                    
+                    ut.rate = 0.9;
+                    ut.pitch = 1.0;
+                    
                     synth.cancel();
                     synth.speak(ut);
                 };
+
+                useEffect(() => {
+                    if (window.speechSynthesis) {
+                        window.speechSynthesis.getVoices();
+                    }
+                }, []);
 
                 useEffect(() => {
                     const fetchLessons = async () => {
