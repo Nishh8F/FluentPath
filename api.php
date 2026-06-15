@@ -54,5 +54,5 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 // Return the data to the app
-echo json_encode($lessons);
+echo json_encode($lessons, JSON_UNESCAPED_UNICODE);
 ?>

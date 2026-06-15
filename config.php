@@ -25,6 +25,7 @@ function getDBConnection() {
     try {
         $conn = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $username, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $conn->exec("SET NAMES utf8mb4");
         return $conn;
     } catch(PDOException $exception) {
         echo json_encode(["error" => "Connection error: " . $exception->getMessage()]);

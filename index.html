@@ -1897,6 +1897,9 @@
 
                     if (selectedAnswer === currentQuestion.correctIndex) {
                         setIsCorrect(true);
+                        if (window.AppInventor) {
+                            window.AppInventor.setWebViewString("PLAY_SOUND_CORRECT");
+                        }
                         setTimeout(async () => {
                             if (currentQuestionIndex < lessonData.length - 1) {
                                 setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -1923,6 +1926,9 @@
                         }, 1500);
                     } else {
                         setIsCorrect(false);
+                        if (window.AppInventor) {
+                            window.AppInventor.setWebViewString("PLAY_SOUND_WRONG");
+                        }
                         setShake(true);
                         setTimeout(() => setShake(false), 500);
                         
