@@ -1715,6 +1715,24 @@
                 const [gameOver, setGameOver] = useState(false);
                 const [shake, setShake] = useState(false);
 
+                const speakText = (text, langId) => {
+                    if (!window.speechSynthesis) return;
+                    const synth = window.speechSynthesis;
+                    const ut = new SpeechSynthesisUtterance(text);
+                    const langMap = {
+                        english: 'en-US',
+                        russian: 'ru-RU',
+                        kelantan: 'ms-MY',
+                        terengganu: 'ms-MY',
+                        perak: 'ms-MY',
+                        selangor: 'ms-MY',
+                        utara: 'ms-MY'
+                    };
+                    ut.lang = langMap[langId] || 'ms-MY';
+                    synth.cancel();
+                    synth.speak(ut);
+                };
+
                 useEffect(() => {
                     const fetchLessons = async () => {
                         try {
@@ -1846,7 +1864,12 @@
                         <p className="subtitle">Listen carefully and select the correct meaning in English.</p>
 
                         <div className="lesson-word">
-                            <i className="fa-solid fa-volume-high" style={{ display: 'block', fontSize: '24px', color: 'var(--text-muted)', marginBottom: '16px' }}></i>
+                            <i 
+                                className="fa-solid fa-volume-high" 
+                                style={{ display: 'block', fontSize: '24px', color: 'var(--primary)', marginBottom: '16px', cursor: 'pointer' }}
+                                onClick={() => speakText(currentQuestion.phrase, selectedLang?.id)}
+                                title="Listen to phrase"
+                            ></i>
                             {currentQuestion.phrase}
                         </div>
 
