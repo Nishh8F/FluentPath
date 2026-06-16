@@ -12,6 +12,22 @@ require_once __DIR__ . '/config.php';
 try {
     $conn = getDBConnection();
 
+    // Fix for MIT App Inventor dropping cookies: Fallback to Authorization Header
+    $headers = getallheaders();
+    $authHeader = $headers['Authorization'] ?? '';
+    if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+        $token = $matches[1];
+        if (!isset($_SESSION['user_id'])) {
+            $stmt = $conn->prepare("SELECT id, username FROM users WHERE auth_token = ?");
+            $stmt->execute([$token]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $_SESSION['user_id'] = $row['id'];
+                $_SESSION['username'] = $row['username'];
+            }
+        }
+    }
+
     $action = $_GET['action'] ?? '';
 
     // Helper function to get progress

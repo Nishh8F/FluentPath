@@ -711,6 +711,15 @@
             const [currentView, setCurrentView] = useState('welcome'); // welcome, select, dashboard, lesson, login, register
             const [selectedLang, setSelectedLang] = useState(null);
             const [currentUser, setCurrentUser] = useState(null);
+            
+            useEffect(() => {
+                if (currentUser && currentUser.auth_token) {
+                    window.fluentpath_auth_token = currentUser.auth_token;
+                } else if (currentUser === null) {
+                    window.fluentpath_auth_token = null;
+                }
+            }, [currentUser]);
+
             const [authChecking, setAuthChecking] = useState(true);
             const [theme, setTheme] = useState(() => {
                 let saved = null;

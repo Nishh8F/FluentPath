@@ -24,13 +24,42 @@ function getApiUrl(endpoint) {
     return API_BASE_URL + '/' + endpoint.replace(/^\//, '');
 }
 
-// Globally override fetch to ALWAYS include credentials
-// This is critical for cross-origin sessions and cookies to work (e.g., GitHub Pages to Azure)
+// Globally override fetch to ALWAYS include credentials and token
 const originalFetch = window.fetch;
 window.fetch = async function(resource, config) {
     if (!config) {
         config = {};
     }
     config.credentials = 'include';
+    
+    // Auto-attach auth_token if available
+    let token = null;
+    try {
+        if (window.localStorage) {
+            token = window.localStorage.getItem('fluentpath_token');
+        }
+    } catch(e) {}
+    
+    if (window.AppInventor) {
+        const msg = window.AppInventor.getWebViewString() || "";
+        if (msg.startsWith("LOAD_TOKEN:")) {
+             const parts = msg.split("|");
+             token = parts[0].split(":")[1] || token;
+        }
+    }
+    
+    // Fallback to globally stored session token (set during login/registration)
+    token = window.fluentpath_auth_token || token;
+    
+    if (token) {
+        if (!config.headers) config.headers = {};
+        // If config.headers is Headers object, we need to append
+        if (config.headers instanceof Headers) {
+            config.headers.append('Authorization', 'Bearer ' + token);
+        } else {
+            config.headers['Authorization'] = 'Bearer ' + token;
+        }
+    }
+    
     return originalFetch(resource, config);
 };
