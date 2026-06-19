@@ -11,7 +11,7 @@ if (file_exists(__DIR__ . '/.env')) {
 }
 
 // Database Configuration
-$host = $_ENV['DB_HOST'] ?? 'localhost';
+$host = $_ENV['DB_HOST'] ?? '127.0.0.1';
 $port = $_ENV['DB_PORT'] ?? '3307';
 $db_name = $_ENV['DB_NAME'] ?? 'fluentpath';
 $username = $_ENV['DB_USERNAME'] ?? 'root';
