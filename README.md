@@ -15,7 +15,9 @@ FluentPath is a modern, beautifully designed, and highly gamified language learn
   - Glassmorphism effects, smooth gradients, and curated color palettes.
   - Fully responsive, mobile-simulated learning environment acting as a PWA-like Single Page Application (SPA).
   - High-fidelity dark mode designed for a sleek and immersive experience.
-- **Interactive Capabilities**: Built-in support for motion sensors (specifically iOS) to unlock rewards via interactive, physical actions.
+- **Interactive Capabilities**: 
+  - Built-in support for motion sensors (specifically iOS) to unlock rewards via interactive, physical actions.
+  - Native **Speech-to-Text Integration** via MIT App Inventor for real-time pronunciation evaluation. It dynamically sets the correct language dictionary and calculates speaking accuracy using a Levenshtein distance string similarity algorithm.
 - **Robust Backend integration**: Uses a fast PHP and MySQL stack to securely handle authentication, track user progress across different languages, and persist state.
 - **Enterprise-Grade Security**: Features IP-based rate limiting to prevent brute-force attacks, secure Cross-Origin Resource Sharing (CORS) for decoupled deployments, and PDO prepared statements to defend against SQL Injection.
 
