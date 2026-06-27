@@ -2621,65 +2621,99 @@
 
             const PronunciationScreen = () => {
                 const [isRecording, setIsRecording] = useState(false);
-                const [hasRecording, setHasRecording] = useState(false);
-                const [recordingTime, setRecordingTime] = useState(0);
+                const [spokenText, setSpokenText] = useState("");
+                const [closestMatch, setClosestMatch] = useState(null);
+                const [matchScore, setMatchScore] = useState(0);
+                const [phrases, setPhrases] = useState([]);
+
+                // Levenshtein distance algorithm for string similarity
+                const getSimilarity = (s1, s2) => {
+                    s1 = s1.toLowerCase().trim();
+                    s2 = s2.toLowerCase().trim();
+                    let costs = new Array();
+                    for (let i = 0; i <= s1.length; i++) {
+                        let lastValue = i;
+                        for (let j = 0; j <= s2.length; j++) {
+                            if (i == 0)
+                                costs[j] = j;
+                            else {
+                                if (j > 0) {
+                                    let newValue = costs[j - 1];
+                                    if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                        newValue = Math.min(Math.min(newValue, lastValue),
+                                            costs[j]) + 1;
+                                    costs[j - 1] = lastValue;
+                                    lastValue = newValue;
+                                }
+                            }
+                        }
+                        if (i > 0)
+                            costs[s2.length] = lastValue;
+                    }
+                    const distance = costs[s2.length];
+                    const maxLen = Math.max(s1.length, s2.length);
+                    if (maxLen === 0) return 100;
+                    return Math.round(((maxLen - distance) / maxLen) * 100);
+                };
 
                 useEffect(() => {
-                    let timer;
-                    if (isRecording) {
-                        timer = setInterval(() => {
-                            setRecordingTime(prev => prev + 1);
-                        }, 1000);
-                    } else {
-                        setRecordingTime(0);
-                    }
-                    return () => clearInterval(timer);
-                }, [isRecording]);
+                    // Fetch phrases on load
+                    const fetchPhrases = async () => {
+                        if (!selectedLang) return;
+                        try {
+                            const response = await fetch(getApiUrl(`api.php?lang=${selectedLang.id}`));
+                            const data = await response.json();
+                            if (data && data.length > 0 && !data.error) {
+                                const phraseList = data.map(item => item.phrase);
+                                setPhrases(phraseList);
+                            }
+                        } catch (error) {
+                            console.error("Failed to fetch phrases:", error);
+                        }
+                    };
+                    fetchPhrases();
+                }, [selectedLang]);
 
                 useEffect(() => {
                     const checkAppInventor = setInterval(() => {
                         if (window.AppInventor) {
                             const msg = window.AppInventor.getWebViewString();
-                            if (msg === "RECORDING_SAVED") {
-                                setHasRecording(true);
+                            if (msg && msg.startsWith("SPEECH_RESULT:")) {
+                                const text = msg.replace("SPEECH_RESULT:", "").trim();
                                 setIsRecording(false);
-                                window.AppInventor.setWebViewString("ACK_RECORDING_SAVED");
-                                showToast("Recording saved successfully!", "success");
+                                setSpokenText(text);
+                                window.AppInventor.setWebViewString("ACK_SPEECH_RESULT");
+                                
+                                // Find closest match
+                                if (phrases.length > 0 && text.length > 0) {
+                                    let bestScore = -1;
+                                    let bestPhrase = "";
+                                    phrases.forEach(p => {
+                                        const score = getSimilarity(text, p);
+                                        if (score > bestScore) {
+                                            bestScore = score;
+                                            bestPhrase = p;
+                                        }
+                                    });
+                                    setClosestMatch(bestPhrase);
+                                    setMatchScore(bestScore);
+                                }
                             }
                         }
                     }, 500);
                     return () => clearInterval(checkAppInventor);
-                }, []);
+                }, [phrases]);
 
-                const startRecord = () => {
+                const startSpeech = () => {
                     setIsRecording(true);
-                    setHasRecording(false);
+                    setSpokenText("");
+                    setClosestMatch(null);
+                    setMatchScore(0);
                     if (window.AppInventor) {
-                        window.AppInventor.setWebViewString("START_RECORD");
+                        window.AppInventor.setWebViewString("START_SPEECH_RECOGNITION");
                     } else {
                         showToast("App Inventor not detected", "error");
                     }
-                };
-
-                const stopRecord = () => {
-                    setIsRecording(false);
-                    if (window.AppInventor) {
-                        window.AppInventor.setWebViewString("STOP_RECORD");
-                    }
-                };
-
-                const playRecord = () => {
-                    if (window.AppInventor) {
-                        window.AppInventor.setWebViewString("PLAY_RECORD");
-                    } else {
-                        showToast("App Inventor not detected", "error");
-                    }
-                };
-
-                const formatTime = (secs) => {
-                    const m = Math.floor(secs / 60);
-                    const s = secs % 60;
-                    return `${m}:${s < 10 ? '0' : ''}${s}`;
                 };
 
                 return (
@@ -2694,13 +2728,13 @@
                             <h2 style={{ fontSize: '18px', margin: '0 0 0 16px', fontWeight: '700' }}>Pronunciation Practice</h2>
                         </div>
 
-                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '40px' }}>
                             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                                 <h3 style={{ fontSize: '24px', margin: '0 0 8px 0', color: 'var(--text-dark)' }}>{selectedLang ? selectedLang.title : 'Language'}</h3>
-                                <p style={{ color: 'var(--text-muted)', margin: 0 }}>Record your voice and compare it.</p>
+                                <p style={{ color: 'var(--text-muted)', margin: 0 }}>Tap to speak and see how close you are!</p>
                             </div>
 
-                            <div style={{ position: 'relative', width: '160px', height: '160px', marginBottom: '40px' }}>
+                            <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '40px' }}>
                                 {isRecording && (
                                     <>
                                         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', animation: 'pulse-red 1.5s infinite' }}></div>
@@ -2708,31 +2742,38 @@
                                     </>
                                 )}
                                 <button
-                                    onClick={isRecording ? stopRecord : startRecord}
+                                    onClick={startSpeech}
                                     style={{
                                         position: 'relative', zIndex: 10, width: '100%', height: '100%', borderRadius: '50%',
                                         background: isRecording ? 'var(--error)' : 'var(--primary)',
-                                        border: 'none', color: 'white', fontSize: '64px',
+                                        border: 'none', color: 'white', fontSize: '48px',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                                         boxShadow: '0 8px 24px rgba(0,0,0,0.2)', transition: 'background 0.3s'
                                     }}
                                 >
-                                    <i className={`fa-solid ${isRecording ? 'fa-stop' : 'fa-microphone'}`}></i>
+                                    <i className={`fa-solid ${isRecording ? 'fa-ellipsis' : 'fa-microphone'}`}></i>
                                 </button>
                             </div>
 
-                            <div style={{ fontSize: '32px', fontWeight: '800', fontFamily: 'monospace', color: isRecording ? 'var(--error)' : 'var(--text-dark)', marginBottom: '40px' }}>
-                                {formatTime(recordingTime)}
-                            </div>
+                            {spokenText && (
+                                <div style={{ width: '100%', background: 'var(--card-bg)', borderRadius: '16px', padding: '24px', boxShadow: '0 4px 12px var(--shadow)', boxSizing: 'border-box' }}>
+                                    <div style={{ marginBottom: '16px' }}>
+                                        <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase', marginBottom: '4px' }}>You said</div>
+                                        <div style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)' }}>"{spokenText}"</div>
+                                    </div>
+                                    
+                                    {closestMatch && (
+                                        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '16px' }}>
+                                            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase', marginBottom: '4px' }}>Closest Match</div>
+                                            <div style={{ fontSize: '18px', fontWeight: '700', color: 'var(--primary)' }}>"{closestMatch}"</div>
+                                        </div>
+                                    )}
 
-                            {hasRecording && (
-                                <button
-                                    className="btn"
-                                    onClick={playRecord}
-                                    style={{ background: 'var(--success)', maxWidth: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                                >
-                                    <i className="fa-solid fa-play"></i> Play Recording
-                                </button>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: matchScore > 80 ? '#DCFCE7' : matchScore > 50 ? '#FEF9C3' : '#FEE2E2', padding: '12px 16px', borderRadius: '12px' }}>
+                                        <span style={{ fontSize: '14px', fontWeight: '700', color: matchScore > 80 ? '#166534' : matchScore > 50 ? '#854D0E' : '#991B1B' }}>Accuracy</span>
+                                        <span style={{ fontSize: '20px', fontWeight: '800', color: matchScore > 80 ? '#15803D' : matchScore > 50 ? '#A16207' : '#B91C1C' }}>{matchScore}%</span>
+                                    </div>
+                                </div>
                             )}
                         </div>
                     </div>
