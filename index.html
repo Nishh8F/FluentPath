@@ -8,7 +8,7 @@
 
     <!-- Global Error Handler for WebViews -->
     <script>
-        window.onerror = function(message, source, lineno, colno, error) {
+        window.onerror = function (message, source, lineno, colno, error) {
             alert("Error: " + message + " at line " + lineno);
             return false;
         };
@@ -35,10 +35,10 @@
             --error: #EF4444;
             --overlay-bg: rgba(248, 249, 250, 1);
             --overlay-bg-transparent: rgba(248, 249, 250, 0);
-            --welcome-bg-1: rgba(230,240,237,0.8);
-            --welcome-bg-2: rgba(255,255,255,1);
+            --welcome-bg-1: rgba(230, 240, 237, 0.8);
+            --welcome-bg-2: rgba(255, 255, 255, 1);
             --badge-bg: rgba(230, 240, 237, 0.85);
-            --shadow: rgba(0,0,0,0.1);
+            --shadow: rgba(0, 0, 0, 0.1);
             --btn-text: #FFFFFF;
         }
 
@@ -57,7 +57,7 @@
             --welcome-bg-1: rgba(17, 24, 39, 0.9);
             --welcome-bg-2: rgba(17, 24, 39, 1);
             --badge-bg: rgba(31, 41, 55, 0.85);
-            --shadow: rgba(0,0,0,0.5);
+            --shadow: rgba(0, 0, 0, 0.5);
             --btn-text: #111827;
         }
 
@@ -350,13 +350,26 @@
             pointer-events: none;
             text-align: center;
         }
+
         .toast-container.show {
             opacity: 1;
             top: 24px;
         }
-        .toast-success { background: var(--success); color: white; }
-        .toast-error { background: var(--error); color: white; }
-        .toast-info { background: var(--primary); color: var(--btn-text); }
+
+        .toast-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .toast-error {
+            background: var(--error);
+            color: white;
+        }
+
+        .toast-info {
+            background: var(--primary);
+            color: var(--btn-text);
+        }
 
         /* Auth Screens */
         .auth-screen {
@@ -367,23 +380,27 @@
             height: 100%;
             overflow-y: auto;
         }
+
         .auth-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 24px 24px 16px 24px;
         }
+
         .auth-logo {
             font-size: 20px;
             font-weight: 700;
             color: var(--primary);
         }
+
         .hero-img {
             width: 100%;
             height: 220px;
             object-fit: cover;
             position: relative;
         }
+
         .hero-overlay {
             position: absolute;
             bottom: 0;
@@ -396,16 +413,19 @@
             justify-content: flex-end;
             padding: 0 24px;
         }
+
         .auth-form-container {
             padding: 24px;
             flex: 1;
             display: flex;
             flex-direction: column;
         }
+
         .input-group {
             margin-bottom: 20px;
             position: relative;
         }
+
         .input-label {
             font-size: 11px;
             font-weight: 600;
@@ -413,11 +433,13 @@
             margin-bottom: 8px;
             display: block;
         }
+
         .input-wrapper {
             position: relative;
             display: flex;
             align-items: center;
         }
+
         .input-icon {
             position: absolute;
             left: 16px;
@@ -425,6 +447,7 @@
             font-size: 16px;
             pointer-events: none;
         }
+
         .auth-input {
             width: 100%;
             padding: 16px 16px 16px 44px;
@@ -435,10 +458,12 @@
             box-sizing: border-box;
             color: var(--text-dark);
         }
+
         .auth-input:focus {
             outline: none;
             border-color: var(--primary);
         }
+
         .eye-icon {
             position: absolute;
             right: 16px;
@@ -446,6 +471,7 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         .forgot-pass {
             position: absolute;
             right: 0;
@@ -455,6 +481,7 @@
             font-weight: 600;
             cursor: pointer;
         }
+
         .auth-btn {
             background-color: var(--primary);
             color: var(--btn-text);
@@ -468,20 +495,24 @@
             margin-top: 8px;
             transition: opacity 0.2s;
         }
+
         .auth-footer {
             padding: 24px;
             text-align: center;
         }
+
         .auth-footer-text {
             font-size: 13px;
             color: var(--text-muted);
             margin-bottom: 24px;
         }
+
         .auth-footer-text span {
             color: var(--primary);
             font-weight: 700;
             cursor: pointer;
         }
+
         .legal-links {
             display: flex;
             justify-content: center;
@@ -489,20 +520,24 @@
             font-size: 10px;
             color: var(--text-muted);
         }
+
         .strength-bars {
             display: flex;
             gap: 4px;
             margin-top: 12px;
         }
+
         .s-bar {
             height: 3px;
             flex: 1;
             border-radius: 2px;
             background: #E5E7EB;
         }
+
         .s-bar.active {
             background: #10B981;
         }
+
         .divider {
             display: flex;
             align-items: center;
@@ -513,13 +548,21 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .divider::before, .divider::after {
+
+        .divider::before,
+        .divider::after {
             content: '';
             flex: 1;
             border-bottom: 1px solid #E5E7EB;
         }
-        .divider:not(:empty)::before { margin-right: 12px; }
-        .divider:not(:empty)::after { margin-left: 12px; }
+
+        .divider:not(:empty)::before {
+            margin-right: 12px;
+        }
+
+        .divider:not(:empty)::after {
+            margin-left: 12px;
+        }
 
         /* Welcome Screen */
         .welcome-screen-bg {
@@ -530,10 +573,12 @@
             padding: 0;
             overflow-y: auto;
         }
+
         .welcome-header {
             text-align: center;
             padding: 40px 24px 20px 24px;
         }
+
         .welcome-logo {
             font-size: 20px;
             font-weight: 700;
@@ -543,6 +588,7 @@
             justify-content: center;
             gap: 8px;
         }
+
         .welcome-image-container {
             position: relative;
             margin: 20px auto;
@@ -552,6 +598,7 @@
             justify-content: center;
             align-items: center;
         }
+
         .welcome-hero-img {
             width: 240px;
             height: 240px;
@@ -562,6 +609,7 @@
             z-index: 2;
             border: 4px solid var(--card-bg);
         }
+
         .welcome-badge-1 {
             position: absolute;
             top: 0;
@@ -580,6 +628,7 @@
             gap: 6px;
             box-shadow: 0 8px 16px var(--shadow);
         }
+
         .welcome-badge-2 {
             position: absolute;
             bottom: 20px;
@@ -596,6 +645,7 @@
             gap: 8px;
             box-shadow: 0 8px 16px var(--shadow);
         }
+
         .welcome-content {
             padding: 24px;
             text-align: center;
@@ -603,6 +653,7 @@
             display: flex;
             flex-direction: column;
         }
+
         .welcome-title {
             font-size: 28px;
             font-weight: 800;
@@ -610,9 +661,11 @@
             margin-bottom: 12px;
             letter-spacing: -0.5px;
         }
+
         .welcome-title span {
             color: var(--primary);
         }
+
         .welcome-subtitle {
             font-size: 14px;
             color: var(--text-muted);
@@ -620,6 +673,7 @@
             margin-bottom: 32px;
             padding: 0 16px;
         }
+
         .welcome-btn {
             background-color: var(--primary);
             color: var(--btn-text);
@@ -636,6 +690,7 @@
             gap: 8px;
             transition: opacity 0.2s;
         }
+
         .welcome-login-link {
             font-size: 11px;
             color: var(--text-muted);
@@ -670,9 +725,23 @@
         }
 
         @keyframes rotateIcon {
-            0% { transform: rotate(-90deg); }
-            50% { transform: rotate(0deg); }
-            100% { transform: rotate(-90deg); }
+            0% {
+                transform: rotate(-90deg);
+            }
+
+            50% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(-90deg);
+            }
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
         #landscape-warning h2 {
@@ -692,6 +761,7 @@
             #root {
                 display: none !important;
             }
+
             #landscape-warning {
                 display: flex !important;
             }
@@ -714,7 +784,7 @@
             const [currentView, setCurrentView] = useState('welcome'); // welcome, select, dashboard, lesson, login, register
             const [selectedLang, setSelectedLang] = useState(null);
             const [currentUser, setCurrentUser] = useState(null);
-            
+
             useEffect(() => {
                 if (currentUser && currentUser.auth_token) {
                     window.fluentpath_auth_token = currentUser.auth_token;
@@ -730,7 +800,7 @@
                     if (window.localStorage) {
                         saved = window.localStorage.getItem('fluentpath_theme');
                     }
-                } catch (e) {}
+                } catch (e) { }
                 if (saved) return saved;
                 return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             });
@@ -762,7 +832,7 @@
                 };
                 const targetLang = fullLangMap[langId] || 'ms-MY';
                 ut.lang = targetLang;
-                
+
                 const voices = synth.getVoices();
                 if (voices.length > 0) {
                     const preferredVoices = voices.filter(v => v.lang.startsWith(targetLang.split('-')[0]) && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium') || v.name.includes('Online')));
@@ -775,10 +845,10 @@
                         }
                     }
                 }
-                
+
                 ut.rate = 0.9;
                 ut.pitch = 1.0;
-                
+
                 synth.cancel();
                 synth.speak(ut);
             };
@@ -799,14 +869,14 @@
                     utara: 'ms'
                 };
                 const targetLang = shortLangMap[langId] || 'ms';
-                
+
                 try {
                     const audio = new window.Audio(`https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${targetLang}&client=tw-ob`);
                     audio.play().catch(e => {
                         console.log("Audio fallback failed, trying Web Speech API", e);
                         fallbackToWebSpeech(text, langId);
                     });
-                } catch(e) {
+                } catch (e) {
                     fallbackToWebSpeech(text, langId);
                 }
             };
@@ -820,7 +890,7 @@
             const VocabScreen = ({ topic }) => {
                 const [vocabList, setVocabList] = useState([]);
                 const [loading, setLoading] = useState(true);
-                
+
                 useEffect(() => {
                     const fetchVocab = async () => {
                         setLoading(true);
@@ -846,7 +916,7 @@
                 return (
                     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', background: 'var(--bg-color)', overflowY: 'auto' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', position: 'sticky', top: 0, zIndex: 10, background: 'var(--bg-color)' }}>
-                            <div 
+                            <div
                                 style={{ width: '36px', height: '36px', background: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
                                 onClick={() => setCurrentView('dashboard')}
                             >
@@ -857,7 +927,7 @@
                         </div>
                         <div style={{ padding: '0 20px 40px 20px' }}>
                             <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '20px' }}>Essential phrases to help you with {topic}.</p>
-                            
+
                             {loading ? (
                                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
                                     <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '32px', color: 'var(--primary)' }}></i>
@@ -868,7 +938,7 @@
                                         <div key={i} style={{ background: 'var(--card-bg)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border-color)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                                                 <h3 style={{ margin: 0, fontSize: '18px', color: 'var(--primary)', fontWeight: 'bold', paddingRight: '12px' }}>{v.word}</h3>
-                                                <div 
+                                                <div
                                                     style={{ width: '32px', height: '32px', minWidth: '32px', background: '#E0F2FE', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                                                     onClick={() => speakText(v.word, selectedLang?.id)}
                                                 >
@@ -893,7 +963,7 @@
                     if (window.localStorage) {
                         window.localStorage.setItem('fluentpath_theme', theme);
                     }
-                } catch (e) {}
+                } catch (e) { }
 
                 if (isInitialMount.current) {
                     isInitialMount.current = false;
@@ -922,7 +992,7 @@
                         const parts = msg.split("|");
                         const tokenPart = parts[0];
                         const token = tokenPart.split(":")[1] || '';
-                        
+
                         if (parts.length > 1 && parts[1].startsWith("THEME:")) {
                             const savedTheme = parts[1].split(":")[1];
                             if (savedTheme === 'dark' || savedTheme === 'light') {
@@ -937,7 +1007,7 @@
 
                         const formData = new FormData();
                         formData.append('auth_token', token);
-                        
+
                         fetch(getApiUrl('auth.php?action=token_login'), { method: 'POST', body: formData })
                             .then(res => res.json())
                             .then(data => {
@@ -953,7 +1023,7 @@
                         return;
                     }
                 }
-                
+
                 checkSession();
             }, []);
 
@@ -976,7 +1046,7 @@
             // Global Easter Egg Shake Detector
             useEffect(() => {
                 if (!currentUser) return;
-                
+
                 // Check if user already has the Milk Shake badge
                 const hasMilkShakeBadge = currentUser.badges?.some(b => b.title === 'Shake Master' || b.title === 'Milk Shake');
                 if (hasMilkShakeBadge) return;
@@ -1200,7 +1270,7 @@
                             <i className="fa-solid fa-earth-asia"></i> FluentPath
                         </div>
                     </div>
-                    
+
                     <div className="welcome-image-container">
                         <div className="welcome-badge-1">
                             <i className="fa-regular fa-heart"></i> Terima Kasih!
@@ -1214,7 +1284,7 @@
                     <div className="welcome-content">
                         <h1 className="welcome-title">Bridge Your <span>World</span></h1>
                         <p className="welcome-subtitle">Learn local Malaysian dialects and international languages with ease.</p>
-                        
+
                         <div style={{ marginTop: 'auto' }}>
                             <button className="welcome-btn" onClick={() => setCurrentView('register')}>
                                 Get Started <i className="fa-solid fa-arrow-right"></i>
@@ -1266,7 +1336,7 @@
                             <div className="auth-logo">FluentPath</div>
                             <i className="fa-regular fa-circle-question" style={{ color: '#4B5563', fontSize: '18px' }}></i>
                         </div>
-                        
+
                         <div style={{ position: 'relative' }}>
                             <img src={getApiUrl('uploads/login_hero.png')} alt="Succulents" className="hero-img" onError={(e) => { e.target.style.display = 'none' }} />
                             <div className="hero-overlay">
@@ -1277,19 +1347,19 @@
 
                         <div className="auth-form-container">
                             {error && <div style={{ color: '#DC2626', background: '#FEE2E2', padding: '12px', borderRadius: '8px', textAlign: 'center', marginBottom: '16px', fontSize: '13px', fontWeight: '600' }}>{error}</div>}
-                            
+
                             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                                 <div className="input-group">
                                     <label className="input-label">Email or Username</label>
                                     <div className="input-wrapper">
                                         <i className="fa-regular fa-envelope input-icon"></i>
-                                        <input 
-                                            type="text" 
-                                            className="auth-input" 
-                                            placeholder="amy@example.com" 
-                                            required 
-                                            value={username} 
-                                            onChange={e => setUsername(e.target.value.replace(/\s/g, ''))} 
+                                        <input
+                                            type="text"
+                                            className="auth-input"
+                                            placeholder="amy@example.com"
+                                            required
+                                            value={username}
+                                            onChange={e => setUsername(e.target.value.replace(/\s/g, ''))}
                                         />
                                     </div>
                                 </div>
@@ -1299,13 +1369,13 @@
                                     <span className="forgot-pass">Forgot Password?</span>
                                     <div className="input-wrapper">
                                         <i className="fa-solid fa-lock input-icon"></i>
-                                        <input 
-                                            type={showPassword ? "text" : "password"} 
-                                            className="auth-input" 
-                                            placeholder="••••••••" 
-                                            required 
-                                            value={password} 
-                                            onChange={e => setPassword(e.target.value)} 
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            className="auth-input"
+                                            placeholder="••••••••"
+                                            required
+                                            value={password}
+                                            onChange={e => setPassword(e.target.value)}
                                         />
                                         <i className={`fa-regular ${showPassword ? 'fa-eye-slash' : 'fa-eye'} eye-icon`} onClick={() => setShowPassword(!showPassword)}></i>
                                     </div>
@@ -1392,19 +1462,19 @@
                             </div>
 
                             {error && <div style={{ color: '#DC2626', background: '#FEE2E2', padding: '12px', borderRadius: '8px', textAlign: 'center', marginBottom: '16px', fontSize: '13px', fontWeight: '600' }}>{error}</div>}
-                            
+
                             <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                                 <div className="input-group">
                                     <label className="input-label">Full Name</label>
                                     <div className="input-wrapper">
                                         <i className="fa-regular fa-user input-icon"></i>
-                                        <input 
-                                            type="text" 
-                                            className="auth-input" 
-                                            placeholder="John Doe" 
-                                            required 
-                                            value={name} 
-                                            onChange={e => setName(e.target.value)} 
+                                        <input
+                                            type="text"
+                                            className="auth-input"
+                                            placeholder="John Doe"
+                                            required
+                                            value={name}
+                                            onChange={e => setName(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -1413,13 +1483,13 @@
                                     <label className="input-label">Email Address (Username)</label>
                                     <div className="input-wrapper">
                                         <i className="fa-regular fa-envelope input-icon"></i>
-                                        <input 
-                                            type="text" 
-                                            className="auth-input" 
-                                            placeholder="hello@example.com" 
-                                            required 
-                                            value={username} 
-                                            onChange={e => setUsername(e.target.value.replace(/\s/g, ''))} 
+                                        <input
+                                            type="text"
+                                            className="auth-input"
+                                            placeholder="hello@example.com"
+                                            required
+                                            value={username}
+                                            onChange={e => setUsername(e.target.value.replace(/\s/g, ''))}
                                         />
                                     </div>
                                     <div style={{ fontSize: '10px', color: '#10B981', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -1431,13 +1501,13 @@
                                     <label className="input-label">Password</label>
                                     <div className="input-wrapper">
                                         <i className="fa-solid fa-lock input-icon"></i>
-                                        <input 
-                                            type={showPassword ? "text" : "password"} 
-                                            className="auth-input" 
-                                            placeholder="••••••••" 
-                                            required 
-                                            value={password} 
-                                            onChange={e => setPassword(e.target.value)} 
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            className="auth-input"
+                                            placeholder="••••••••"
+                                            required
+                                            value={password}
+                                            onChange={e => setPassword(e.target.value)}
                                         />
                                         <i className={`fa-regular ${showPassword ? 'fa-eye-slash' : 'fa-eye'} eye-icon`} onClick={() => setShowPassword(!showPassword)}></i>
                                     </div>
@@ -1508,12 +1578,12 @@
                 ];
 
                 const q = searchQuery.toLowerCase();
-                const filteredLocal = localDialects.filter(lang => 
-                    lang.title.toLowerCase().includes(q) || 
+                const filteredLocal = localDialects.filter(lang =>
+                    lang.title.toLowerCase().includes(q) ||
                     lang.sub.toLowerCase().includes(q)
                 );
-                const filteredInternational = internationalLangs.filter(lang => 
-                    lang.title.toLowerCase().includes(q) || 
+                const filteredInternational = internationalLangs.filter(lang =>
+                    lang.title.toLowerCase().includes(q) ||
                     lang.sub.toLowerCase().includes(q)
                 );
 
@@ -1557,7 +1627,7 @@
 
                         <div style={{ background: 'var(--card-bg)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '24px', display: 'flex', alignItems: 'center', color: 'var(--text-dark)' }}>
                             <i className="fa-solid fa-search" style={{ marginRight: '12px', color: 'var(--text-muted)' }}></i>
-                            <input 
+                            <input
                                 type="text"
                                 placeholder="Search languages or dialects..."
                                 value={searchQuery}
@@ -1580,27 +1650,27 @@
                                 {filteredLocal.map(lang => {
                                     const isUnlocked = currentUser?.progress?.[lang.id] !== undefined;
                                     return (
-                                    <div key={lang.id} className="lang-card" onClick={() => { 
-                                        if (isUnlocked) {
-                                            setSelectedLang(lang); setCurrentView('dashboard'); 
-                                        } else {
-                                            handleUnlock(lang);
-                                        }
-                                    }}>
-                                        <div className="lang-icon" style={{ opacity: isUnlocked ? 1 : 0.3, filter: isUnlocked ? 'none' : 'grayscale(100%)' }}>{lang.icon}</div>
-                                        <div className="lang-info" style={{ opacity: isUnlocked ? 1 : 0.6 }}>
-                                            <div className="lang-title">{lang.title}</div>
-                                            <div className="lang-sub">{lang.sub}</div>
-                                        </div>
-                                        {isUnlocked ? (
-                                            <i className="fa-solid fa-chevron-right lang-arrow"></i>
-                                        ) : (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', fontWeight: 'bold', background: 'var(--bg-color)', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>
-                                                <i className="fa-solid fa-lock" style={{ fontSize: '10px' }}></i>
-                                                <span style={{ color: '#FACC15' }}>60</span> 🪙
+                                        <div key={lang.id} className="lang-card" onClick={() => {
+                                            if (isUnlocked) {
+                                                setSelectedLang(lang); setCurrentView('dashboard');
+                                            } else {
+                                                handleUnlock(lang);
+                                            }
+                                        }}>
+                                            <div className="lang-icon" style={{ opacity: isUnlocked ? 1 : 0.3, filter: isUnlocked ? 'none' : 'grayscale(100%)' }}>{lang.icon}</div>
+                                            <div className="lang-info" style={{ opacity: isUnlocked ? 1 : 0.6 }}>
+                                                <div className="lang-title">{lang.title}</div>
+                                                <div className="lang-sub">{lang.sub}</div>
                                             </div>
-                                        )}
-                                    </div>
+                                            {isUnlocked ? (
+                                                <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                                            ) : (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', fontWeight: 'bold', background: 'var(--bg-color)', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>
+                                                    <i className="fa-solid fa-lock" style={{ fontSize: '10px' }}></i>
+                                                    <span style={{ color: '#FACC15' }}>60</span> 🪙
+                                                </div>
+                                            )}
+                                        </div>
                                     );
                                 })}
                             </>
@@ -1612,27 +1682,27 @@
                                 {filteredInternational.map(lang => {
                                     const isUnlocked = currentUser?.progress?.[lang.id] !== undefined;
                                     return (
-                                    <div key={lang.id} className="lang-card" onClick={() => { 
-                                        if (isUnlocked) {
-                                            setSelectedLang(lang); setCurrentView('dashboard'); 
-                                        } else {
-                                            handleUnlock(lang);
-                                        }
-                                    }}>
-                                        <div className="lang-icon" style={{ opacity: isUnlocked ? 1 : 0.3, filter: isUnlocked ? 'none' : 'grayscale(100%)' }}>{lang.icon}</div>
-                                        <div className="lang-info" style={{ opacity: isUnlocked ? 1 : 0.6 }}>
-                                            <div className="lang-title">{lang.title}</div>
-                                            <div className="lang-sub">{lang.sub}</div>
-                                        </div>
-                                        {isUnlocked ? (
-                                            <i className="fa-solid fa-chevron-right lang-arrow"></i>
-                                        ) : (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', fontWeight: 'bold', background: 'var(--bg-color)', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>
-                                                <i className="fa-solid fa-lock" style={{ fontSize: '10px' }}></i>
-                                                <span style={{ color: '#FACC15' }}>60</span> 🪙
+                                        <div key={lang.id} className="lang-card" onClick={() => {
+                                            if (isUnlocked) {
+                                                setSelectedLang(lang); setCurrentView('dashboard');
+                                            } else {
+                                                handleUnlock(lang);
+                                            }
+                                        }}>
+                                            <div className="lang-icon" style={{ opacity: isUnlocked ? 1 : 0.3, filter: isUnlocked ? 'none' : 'grayscale(100%)' }}>{lang.icon}</div>
+                                            <div className="lang-info" style={{ opacity: isUnlocked ? 1 : 0.6 }}>
+                                                <div className="lang-title">{lang.title}</div>
+                                                <div className="lang-sub">{lang.sub}</div>
                                             </div>
-                                        )}
-                                    </div>
+                                            {isUnlocked ? (
+                                                <i className="fa-solid fa-chevron-right lang-arrow"></i>
+                                            ) : (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', fontWeight: 'bold', background: 'var(--bg-color)', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>
+                                                    <i className="fa-solid fa-lock" style={{ fontSize: '10px' }}></i>
+                                                    <span style={{ color: '#FACC15' }}>60</span> 🪙
+                                                </div>
+                                            )}
+                                        </div>
                                     );
                                 })}
                             </>
@@ -1649,7 +1719,7 @@
 
             const DashboardScreen = () => {
                 const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
-                
+
                 const insights = [
                     { title: "The Art of Wayang Kulit", desc: "Discover the ancient shadow play of Kelantan.", image: "wayang_kulit.png" },
                     { title: "Traditional Wau Bulan", desc: "Learn about the intricate Malaysian moon kite in Terengganu.", image: "wau_bulan.png" },
@@ -1671,14 +1741,14 @@
                 const userStreak = currentUser?.current_streak || 0;
                 const hasClaimedToday = currentUser?.has_claimed_today;
                 const nextRewardDays = 3 - (userStreak % 3);
-                
+
                 let masteryLevel = "Beginner Mastery";
                 if (currentProgress >= 30 && currentProgress < 70) masteryLevel = "Intermediate Mastery";
                 if (currentProgress >= 70) masteryLevel = "Advanced Mastery";
 
                 const lessonsCompleted = Math.floor((currentProgress / 100) * 50);
                 const vocabsToNextLevel = currentProgress >= 100 ? 0 : 10 - (currentProgress % 10);
-                
+
                 const lessonMap = {
                     kelantan: { title: "Lesson 7: Market Talk", desc: "Learn to bargain at the local Siti Khadijah market.", icon: "fa-utensils" },
                     terengganu: { title: "Lesson 5: Coastal Slang", desc: "Master the unique terms used by local fishermen in Marang.", icon: "fa-fish" },
@@ -1688,179 +1758,197 @@
                     english: { title: "Lesson 12: Business Meetings", desc: "Learn professional phrases for corporate environments.", icon: "fa-briefcase" },
                     russian: { title: "Lesson 8: Winter Essentials", desc: "Vocabulary for staying warm and navigating snowy Moscow.", icon: "fa-snowflake" }
                 };
-                
+
                 const currentLesson = selectedLang ? lessonMap[selectedLang.id] : lessonMap['kelantan'];
 
                 return (
-                <div className="screen" style={{ paddingBottom: '100px' }}>
-                    {/* Header */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ width: '24px', height: '24px', background: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
-                                <i className="fa-solid fa-earth-asia"></i>
+                    <div className="screen" style={{ paddingBottom: '100px' }}>
+                        {/* Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{ width: '24px', height: '24px', background: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
+                                    <i className="fa-solid fa-earth-asia"></i>
+                                </div>
+                                <h2 style={{ fontSize: '18px', margin: 0, fontWeight: '700' }}>FluentPath</h2>
                             </div>
-                            <h2 style={{ fontSize: '18px', margin: 0, fontWeight: '700' }}>FluentPath</h2>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                            <div style={{ background: 'var(--primary-light)', color: 'var(--primary)', padding: '6px 12px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 8px var(--shadow)' }}>
-                                <span style={{ fontSize: '16px' }}>🪙</span> {currentUser?.coins || 0}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                <div style={{ background: 'var(--primary-light)', color: 'var(--primary)', padding: '6px 12px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 8px var(--shadow)' }}>
+                                    <span style={{ fontSize: '16px' }}>🪙</span> {currentUser?.coins || 0}
+                                </div>
+                                <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
+                                <i className="fa-solid fa-gear" style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setCurrentView('profile')}></i>
                             </div>
-                            <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}></i>
-                            <i className="fa-solid fa-gear" style={{ fontSize: '20px', color: 'var(--text-muted)', cursor: 'pointer' }} onClick={() => setCurrentView('profile')}></i>
                         </div>
-                    </div>
 
-                    {/* Active Course */}
-                    <div style={{ background: 'var(--card-bg)', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '16px', position: 'relative', overflow: 'hidden' }}>
-                        <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'var(--bg-color)', borderRadius: '50%', transform: 'translate(30%, -30%)' }}></div>
-                        <div style={{ padding: '20px', position: 'relative', zIndex: 1 }}>
-                            <div style={{ display: 'inline-block', background: '#D1FAE5', color: '#047857', fontSize: '10px', fontWeight: '700', padding: '4px 8px', borderRadius: '12px', marginBottom: '12px' }}>Active Course</div>
-                            <h3 style={{ margin: '0 0 6px 0', fontSize: '16px', fontWeight: '700' }}>{selectedLang ? `${selectedLang.title} - ${selectedLang.sub}` : 'Kelantan Dialect'}</h3>
-                            <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '20px' }}>{masteryLevel} | {currentProgress}% Complete</p>
-                            
-                            <div className="progress-bar" style={{ height: '6px', background: '#E5E7EB', borderRadius: '3px', overflow: 'hidden', marginBottom: '10px' }}>
-                                <div className="progress-fill" style={{ width: `${currentProgress}%`, height: '100%', background: '#064E3B', borderRadius: '3px' }}></div>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#6B7280', fontWeight: '600' }}>
-                                <span>{lessonsCompleted}/50 Lessons Completed</span>
-                                <span>{vocabsToNextLevel} Vocabs to next level</span>
-                            </div>
-                        </div>
-                    </div>
+                        {/* Active Course */}
+                        <div style={{ background: 'var(--card-bg)', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '16px', position: 'relative', overflow: 'hidden' }}>
+                            <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'var(--bg-color)', borderRadius: '50%', transform: 'translate(30%, -30%)' }}></div>
+                            <div style={{ padding: '20px', position: 'relative', zIndex: 1 }}>
+                                <div style={{ display: 'inline-block', background: '#D1FAE5', color: '#047857', fontSize: '10px', fontWeight: '700', padding: '4px 8px', borderRadius: '12px', marginBottom: '12px' }}>Active Course</div>
+                                <h3 style={{ margin: '0 0 6px 0', fontSize: '16px', fontWeight: '700' }}>{selectedLang ? `${selectedLang.title} - ${selectedLang.sub}` : 'Kelantan Dialect'}</h3>
+                                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '20px' }}>{masteryLevel} | {currentProgress}% Complete</p>
 
-                    {/* Day Streak */}
-                    <div 
-                        style={{ 
-                            background: hasClaimedToday ? 'var(--card-bg)' : '#114C3D', 
-                            borderRadius: '16px', 
-                            padding: '24px', 
-                            color: hasClaimedToday ? 'var(--text-muted)' : 'white', 
-                            textAlign: 'center', 
-                            marginBottom: '24px', 
-                            position: 'relative', 
-                            overflow: 'hidden', 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            alignItems: 'center', 
-                            justifyContent: 'center', 
-                            height: '140px', 
-                            boxShadow: hasClaimedToday ? 'none' : '0 8px 24px rgba(17, 76, 61, 0.2)', 
-                            border: hasClaimedToday ? '1px solid var(--border-color)' : 'none',
-                            cursor: hasClaimedToday ? 'default' : 'pointer',
-                            opacity: hasClaimedToday ? 0.7 : 1
-                        }}
-                        onClick={() => {
-                            if (!hasClaimedToday) setCurrentView('reward');
-                        }}
-                    >
-                        <div style={{ position: 'relative', zIndex: 1 }}>
-                            <h2 style={{ fontSize: '32px', margin: '0 0 2px 0', fontWeight: '800', color: hasClaimedToday ? 'var(--text-dark)' : 'white' }}>{userStreak}</h2>
-                            <p style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 12px 0', color: hasClaimedToday ? 'var(--text-dark)' : 'white' }}>Day Streak</p>
-                            <div style={{ fontSize: '10px', fontWeight: '600', color: hasClaimedToday ? 'var(--text-muted)' : 'rgba(255,255,255,0.9)' }}>
-                                {hasClaimedToday ? 'Reward claimed today! Come back tomorrow.' : 'Claim your daily reward now!'}
+                                <div className="progress-bar" style={{ height: '6px', background: '#E5E7EB', borderRadius: '3px', overflow: 'hidden', marginBottom: '10px' }}>
+                                    <div className="progress-fill" style={{ width: `${currentProgress}%`, height: '100%', background: '#064E3B', borderRadius: '3px' }}></div>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#6B7280', fontWeight: '600' }}>
+                                    <span>{lessonsCompleted}/50 Lessons Completed</span>
+                                    <span>{vocabsToNextLevel} Vocabs to next level</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Continue Learning */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                        <h3 className="section-header" style={{ margin: '0', fontSize: '16px' }}>Continue Learning</h3>
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600' }} onClick={() => setCurrentView('select')}>View Path &gt;</span>
-                    </div>
-
-                    <div style={{ background: 'var(--card-bg)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ width: '60px', height: '60px', background: '#0F4C3A', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FCD34D', fontSize: '24px', flexShrink: 0 }}>
-                            <i className={`fa-solid ${currentLesson.icon}`}></i>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                            <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-dark)', fontSize: '14px', fontWeight: '700' }}>{currentLesson.title}</h4>
-                            <p style={{ fontSize: '11px', margin: 0, color: 'var(--text-muted)', lineHeight: '1.4' }}>{currentLesson.desc}</p>
-                        </div>
-                        <button
-                            style={{ background: '#114C3D', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '12px', cursor: 'pointer' }}
+                        {/* Day Streak */}
+                        <div
+                            style={{
+                                background: hasClaimedToday ? 'var(--card-bg)' : '#114C3D',
+                                borderRadius: '16px',
+                                padding: '24px',
+                                color: hasClaimedToday ? 'var(--text-muted)' : 'white',
+                                textAlign: 'center',
+                                marginBottom: '24px',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                height: '140px',
+                                boxShadow: hasClaimedToday ? 'none' : '0 8px 24px rgba(17, 76, 61, 0.2)',
+                                border: hasClaimedToday ? '1px solid var(--border-color)' : 'none',
+                                cursor: hasClaimedToday ? 'default' : 'pointer',
+                                opacity: hasClaimedToday ? 0.7 : 1
+                            }}
                             onClick={() => {
-                                if (selectedLang) setCurrentView('lesson');
-                                else showToast("Please select a language first!", "error");
+                                if (!hasClaimedToday) setCurrentView('reward');
                             }}
                         >
-                            Resume
-                        </button>
-                    </div>
-
-                    {/* Recommended Topics */}
-                    <div style={{ marginBottom: '24px' }}>
-                        <h3 className="section-header" style={{ margin: '0 0 16px 0', fontSize: '16px' }}>Recommended Topics</h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                            <div 
-                                style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
-                                onClick={() => { setSelectedTopic('Greetings'); setCurrentView('vocab'); }}
-                            >
-                                <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
-                                    <i className="fa-solid fa-hand-sparkles"></i>
-                                </div>
-                                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '700' }}>Greetings</h4>
-                                <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>10 Vocabs | 5 Mins Read</p>
-                                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginTop: 'auto' }}>
-                                    <span>Free</span>
-                                    <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#D1D5DB' }}></i>
+                            <div style={{ position: 'relative', zIndex: 1 }}>
+                                <h2 style={{ fontSize: '32px', margin: '0 0 2px 0', fontWeight: '800', color: hasClaimedToday ? 'var(--text-dark)' : 'white' }}>{userStreak}</h2>
+                                <p style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 12px 0', color: hasClaimedToday ? 'var(--text-dark)' : 'white' }}>Day Streak</p>
+                                <div style={{ fontSize: '10px', fontWeight: '600', color: hasClaimedToday ? 'var(--text-muted)' : 'rgba(255,255,255,0.9)' }}>
+                                    {hasClaimedToday ? 'Reward claimed today! Come back tomorrow.' : 'Claim your daily reward now!'}
                                 </div>
                             </div>
-                            <div 
+                        </div>
+
+                        {/* Continue Learning */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                            <h3 className="section-header" style={{ margin: '0', fontSize: '16px' }}>Continue Learning</h3>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600' }} onClick={() => setCurrentView('select')}>View Path &gt;</span>
+                        </div>
+
+                        <div style={{ background: 'var(--card-bg)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div style={{ width: '60px', height: '60px', background: '#0F4C3A', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FCD34D', fontSize: '24px', flexShrink: 0 }}>
+                                <i className={`fa-solid ${currentLesson.icon}`}></i>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-dark)', fontSize: '14px', fontWeight: '700' }}>{currentLesson.title}</h4>
+                                <p style={{ fontSize: '11px', margin: 0, color: 'var(--text-muted)', lineHeight: '1.4' }}>{currentLesson.desc}</p>
+                            </div>
+                            <button
+                                style={{ background: '#114C3D', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '12px', cursor: 'pointer' }}
+                                onClick={() => {
+                                    if (selectedLang) setCurrentView('lesson');
+                                    else showToast("Please select a language first!", "error");
+                                }}
+                            >
+                                Resume
+                            </button>
+                        </div>
+
+                        {/* Recommended Topics */}
+                        <div style={{ marginBottom: '24px' }}>
+                            <h3 className="section-header" style={{ margin: '0 0 16px 0', fontSize: '16px' }}>Recommended Topics</h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                                <div
+                                    style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+                                    onClick={() => { setSelectedTopic('Greetings'); setCurrentView('vocab'); }}
+                                >
+                                    <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
+                                        <i className="fa-solid fa-hand-sparkles"></i>
+                                    </div>
+                                    <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '700' }}>Greetings</h4>
+                                    <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>10 Vocabs | 5 Mins Read</p>
+                                    <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginTop: 'auto' }}>
+                                        <span>Free</span>
+                                        <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#D1D5DB' }}></i>
+                                    </div>
+                                </div>
+                                <div
+                                    style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+                                    onClick={() => { setSelectedTopic('Food'); setCurrentView('vocab'); }}
+                                >
+                                    <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
+                                        <i className="fa-solid fa-bowl-food"></i>
+                                    </div>
+                                    <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '700' }}>Food</h4>
+                                    <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>15 Vocabs | 8 Mins Read</p>
+                                    <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginTop: 'auto' }}>
+                                        <span>New</span>
+                                        <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#D1D5DB' }}></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
                                 style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
-                                onClick={() => { setSelectedTopic('Food'); setCurrentView('vocab'); }}
+                                onClick={() => { setSelectedTopic('Travel'); setCurrentView('vocab'); }}
                             >
                                 <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
-                                    <i className="fa-solid fa-bowl-food"></i>
+                                    <i className="fa-solid fa-plane"></i>
                                 </div>
-                                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '700' }}>Food</h4>
-                                <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>15 Vocabs | 8 Mins Read</p>
-                                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', marginTop: 'auto' }}>
-                                    <span>New</span>
+                                <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '700' }}>Travel</h4>
+                                <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>20 Vocabs | 10 Mins Read</p>
+                                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>
+                                    <span>Intermediate</span>
                                     <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#D1D5DB' }}></i>
                                 </div>
                             </div>
                         </div>
-                        <div 
-                            style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
-                            onClick={() => { setSelectedTopic('Travel'); setCurrentView('vocab'); }}
+
+                        {/* Pronunciation Practice */}
+                        <div style={{ marginBottom: '24px' }}>
+                            <h3 className="section-header" style={{ margin: '0 0 16px 0', fontSize: '16px' }}>Pronunciation Practice</h3>
+                            <div
+                                style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}
+                                onClick={() => { setCurrentView('pronunciation'); }}
+                            >
+                                <div style={{ width: '48px', height: '48px', background: '#FEF08A', color: '#854D0E', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '16px', fontSize: '20px' }}>
+                                    <i className="fa-solid fa-microphone"></i>
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '700' }}>{selectedLang ? selectedLang.title : 'Language'} Pronunciation</h4>
+                                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>Record your voice and compare</p>
+                                </div>
+                                <i className="fa-solid fa-chevron-right" style={{ color: '#D1D5DB' }}></i>
+                            </div>
+                        </div>
+
+                        {/* Cultural Insight */}
+                        <div
+                            style={{ borderRadius: '16px', overflow: 'hidden', position: 'relative', height: '140px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer' }}
+                            onClick={() => showToast('Insight coming soon!', 'info')}
                         >
-                            <div style={{ width: '32px', height: '32px', background: '#CCFBF1', color: '#0F766E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', fontSize: '14px' }}>
-                                <i className="fa-solid fa-plane"></i>
-                            </div>
-                            <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '700' }}>Travel</h4>
-                            <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '0 0 16px 0' }}>20 Vocabs | 10 Mins Read</p>
-                            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>
-                                <span>Intermediate</span>
-                                <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#D1D5DB' }}></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Cultural Insight */}
-                    <div 
-                        style={{ borderRadius: '16px', overflow: 'hidden', position: 'relative', height: '140px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer' }}
-                        onClick={() => showToast('Insight coming soon!', 'info')}
-                    >
-                        {insights.map((insight, index) => (
-                            <div key={index} style={{
-                                position: 'absolute', inset: 0, transition: 'opacity 1s ease-in-out',
-                                opacity: currentInsightIndex === index ? 1 : 0, pointerEvents: currentInsightIndex === index ? 'auto' : 'none'
-                            }}>
-                                <img src={`uploads/${insight.image}`} alt={insight.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = 'uploads/wayang_kulit.png'; }} />
-                                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 100%)', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-                                    <div style={{ fontSize: '9px', fontWeight: '800', color: '#34D399', letterSpacing: '1px', marginBottom: '4px', textTransform: 'uppercase' }}>Cultural Insight</div>
-                                    <h3 style={{ margin: '0 0 4px 0', color: 'white', fontSize: '18px', fontWeight: '800' }}>{insight.title}</h3>
-                                    <p style={{ margin: 0, color: 'rgba(255,255,255,0.9)', fontSize: '11px', fontWeight: '500' }}>{insight.desc}</p>
+                            {insights.map((insight, index) => (
+                                <div key={index} style={{
+                                    position: 'absolute', inset: 0, transition: 'opacity 1s ease-in-out',
+                                    opacity: currentInsightIndex === index ? 1 : 0, pointerEvents: currentInsightIndex === index ? 'auto' : 'none'
+                                }}>
+                                    <img src={`uploads/${insight.image}`} alt={insight.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = 'uploads/wayang_kulit.png'; }} />
+                                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 100%)', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                                        <div style={{ fontSize: '9px', fontWeight: '800', color: '#34D399', letterSpacing: '1px', marginBottom: '4px', textTransform: 'uppercase' }}>Cultural Insight</div>
+                                        <h3 style={{ margin: '0 0 4px 0', color: 'white', fontSize: '18px', fontWeight: '800' }}>{insight.title}</h3>
+                                        <p style={{ margin: 0, color: 'rgba(255,255,255,0.9)', fontSize: '11px', fontWeight: '500' }}>{insight.desc}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
 
-                    <div style={{ textAlign: 'center', marginTop: '32px', marginBottom: '16px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 'bold' }}>
-                        App Version v1.3
-                    </div>
+                        <div style={{ textAlign: 'center', marginTop: '32px', marginBottom: '16px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 'bold' }}>
+                            App Version v1.3
+                        </div>
 
-                </div>
+                    </div>
                 );
             };
 
@@ -1938,7 +2026,7 @@
                         }
                         setShake(true);
                         setTimeout(() => setShake(false), 500);
-                        
+
                         setLives(prev => {
                             const newLives = prev - 1;
                             if (newLives <= 0) {
@@ -2013,8 +2101,8 @@
                         <p className="subtitle">Listen carefully and select the correct meaning in English.<br /><span style={{ fontSize: '12px', opacity: 0.7 }}>(The voice feature is still on beta development, inaccuracy may happens in pronounciation)</span></p>
 
                         <div className="lesson-word">
-                            <i 
-                                className="fa-solid fa-volume-high" 
+                            <i
+                                className="fa-solid fa-volume-high"
                                 style={{ display: 'block', fontSize: '24px', color: 'var(--primary)', marginBottom: '16px', cursor: 'pointer' }}
                                 onClick={() => speakText(currentQuestion.phrase, selectedLang?.id)}
                                 title="Listen to phrase"
@@ -2287,7 +2375,7 @@
                     try {
                         const res = await fetch(getApiUrl('auth.php?action=update_profile'), { method: 'POST', body: data });
                         const result = await res.json();
-                        
+
                         if (result.success) {
                             setCurrentUser(result.user);
                             setIsEditing(false);
@@ -2328,7 +2416,7 @@
                                     <label style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-dark)', marginBottom: '8px', display: 'block' }}>Username *</label>
                                     <input type="text" name="username" required value={formData.username} onChange={handleInputChange} style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', fontSize: '16px', boxSizing: 'border-box' }} />
                                 </div>
-                                
+
                                 <div>
                                     <label style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-dark)', marginBottom: '8px', display: 'block' }}>Full Name</label>
                                     <input type="text" name="name" value={formData.name} onChange={handleInputChange} style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', fontSize: '16px', boxSizing: 'border-box' }} />
@@ -2371,7 +2459,7 @@
                                 <i className="fa-solid fa-gear" style={{ fontSize: '20px', color: 'var(--primary)', cursor: 'pointer' }} onClick={() => setIsEditing(true)}></i>
                             </div>
                         </div>
-                        
+
                         {/* Hero Avatar & Info */}
                         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
                             <div style={{ position: 'relative', width: '120px', height: '120px', margin: '0 auto 16px auto' }}>
@@ -2401,13 +2489,13 @@
                                 ];
                                 const title =
                                     level >= 100 ? titles[7] :
-                                    level >= 75  ? titles[6] :
-                                    level >= 50  ? titles[5] :
-                                    level >= 30  ? titles[4] :
-                                    level >= 20  ? titles[3] :
-                                    level >= 10  ? titles[2] :
-                                    level >= 5   ? titles[1] :
-                                    titles[0];
+                                        level >= 75 ? titles[6] :
+                                            level >= 50 ? titles[5] :
+                                                level >= 30 ? titles[4] :
+                                                    level >= 20 ? titles[3] :
+                                                        level >= 10 ? titles[2] :
+                                                            level >= 5 ? titles[1] :
+                                                                titles[0];
                                 return (
                                     <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '13px', fontWeight: '500' }}>
                                         {title} • Level {level}
@@ -2531,6 +2619,126 @@
                 );
             };
 
+            const PronunciationScreen = () => {
+                const [isRecording, setIsRecording] = useState(false);
+                const [hasRecording, setHasRecording] = useState(false);
+                const [recordingTime, setRecordingTime] = useState(0);
+
+                useEffect(() => {
+                    let timer;
+                    if (isRecording) {
+                        timer = setInterval(() => {
+                            setRecordingTime(prev => prev + 1);
+                        }, 1000);
+                    } else {
+                        setRecordingTime(0);
+                    }
+                    return () => clearInterval(timer);
+                }, [isRecording]);
+
+                useEffect(() => {
+                    const checkAppInventor = setInterval(() => {
+                        if (window.AppInventor) {
+                            const msg = window.AppInventor.getWebViewString();
+                            if (msg === "RECORDING_SAVED") {
+                                setHasRecording(true);
+                                setIsRecording(false);
+                                window.AppInventor.setWebViewString("ACK_RECORDING_SAVED");
+                                showToast("Recording saved successfully!", "success");
+                            }
+                        }
+                    }, 500);
+                    return () => clearInterval(checkAppInventor);
+                }, []);
+
+                const startRecord = () => {
+                    setIsRecording(true);
+                    setHasRecording(false);
+                    if (window.AppInventor) {
+                        window.AppInventor.setWebViewString("START_RECORD");
+                    } else {
+                        showToast("App Inventor not detected", "error");
+                    }
+                };
+
+                const stopRecord = () => {
+                    setIsRecording(false);
+                    if (window.AppInventor) {
+                        window.AppInventor.setWebViewString("STOP_RECORD");
+                    }
+                };
+
+                const playRecord = () => {
+                    if (window.AppInventor) {
+                        window.AppInventor.setWebViewString("PLAY_RECORD");
+                    } else {
+                        showToast("App Inventor not detected", "error");
+                    }
+                };
+
+                const formatTime = (secs) => {
+                    const m = Math.floor(secs / 60);
+                    const s = secs % 60;
+                    return `${m}:${s < 10 ? '0' : ''}${s}`;
+                };
+
+                return (
+                    <div className="screen" style={{ display: 'flex', flexDirection: 'column', height: '100%', paddingBottom: '0' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
+                            <div 
+                                style={{ width: '36px', height: '36px', background: 'var(--card-bg)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px var(--shadow)', border: '1px solid var(--border-color)' }}
+                                onClick={() => setCurrentView('dashboard')}
+                            >
+                                <i className="fa-solid fa-arrow-left" style={{ fontSize: '16px', color: 'var(--text-dark)' }}></i>
+                            </div>
+                            <h2 style={{ fontSize: '18px', margin: '0 0 0 16px', fontWeight: '700' }}>Pronunciation Practice</h2>
+                        </div>
+
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                                <h3 style={{ fontSize: '24px', margin: '0 0 8px 0', color: 'var(--text-dark)' }}>{selectedLang ? selectedLang.title : 'Language'}</h3>
+                                <p style={{ color: 'var(--text-muted)', margin: 0 }}>Record your voice and compare it.</p>
+                            </div>
+
+                            <div style={{ position: 'relative', width: '160px', height: '160px', marginBottom: '40px' }}>
+                                {isRecording && (
+                                    <>
+                                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', animation: 'pulse-red 1.5s infinite' }}></div>
+                                        <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', bottom: '10px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.4)', animation: 'pulse-red 1.5s infinite 0.3s' }}></div>
+                                    </>
+                                )}
+                                <button
+                                    onClick={isRecording ? stopRecord : startRecord}
+                                    style={{
+                                        position: 'relative', zIndex: 10, width: '100%', height: '100%', borderRadius: '50%',
+                                        background: isRecording ? 'var(--error)' : 'var(--primary)',
+                                        border: 'none', color: 'white', fontSize: '64px',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                                        boxShadow: '0 8px 24px rgba(0,0,0,0.2)', transition: 'background 0.3s'
+                                    }}
+                                >
+                                    <i className={`fa-solid ${isRecording ? 'fa-stop' : 'fa-microphone'}`}></i>
+                                </button>
+                            </div>
+
+                            <div style={{ fontSize: '32px', fontWeight: '800', fontFamily: 'monospace', color: isRecording ? 'var(--error)' : 'var(--text-dark)', marginBottom: '40px' }}>
+                                {formatTime(recordingTime)}
+                            </div>
+
+                            {hasRecording && (
+                                <button
+                                    className="btn"
+                                    onClick={playRecord}
+                                    style={{ background: 'var(--success)', maxWidth: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                                >
+                                    <i className="fa-solid fa-play"></i> Play Recording
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
             if (authChecking) {
                 return (
                     <div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--primary)', fontSize: '24px' }}>
@@ -2554,6 +2762,7 @@
                     {currentView === 'dashboard' && <DashboardScreen />}
                     {currentView === 'lesson' && <LessonScreen />}
                     {currentView === 'vocab' && <VocabScreen topic={selectedTopic} />}
+                    {currentView === 'pronunciation' && <PronunciationScreen />}
                     {currentView === 'profile' && <ProfileScreen />}
                     {currentView === 'reward' && <RewardScreen />}
                     {currentView === 'leaderboard' && <LeaderboardScreen />}
