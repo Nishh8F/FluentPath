@@ -47,8 +47,8 @@
             --primary-light: #064E3B;
             --bg-color: #111827;
             --card-bg: #1F2937;
-            --text-dark: #F9FAFB;
-            --text-muted: #9CA3AF;
+            --text-dark: #FFFFFF;
+            --text-muted: #D1D5DB;
             --border-color: #374151;
             --success: #10B981;
             --error: #F87171;
@@ -373,7 +373,7 @@
         .auth-logo {
             font-size: 20px;
             font-weight: 700;
-            color: #0F4C5C;
+            color: var(--primary);
         }
         .hero-img {
             width: 100%;
@@ -406,7 +406,7 @@
         .input-label {
             font-size: 11px;
             font-weight: 600;
-            color: #4B5563;
+            color: var(--text-muted);
             margin-bottom: 8px;
             display: block;
         }
@@ -418,7 +418,7 @@
         .input-icon {
             position: absolute;
             left: 16px;
-            color: #9CA3AF;
+            color: var(--text-muted);
             font-size: 16px;
             pointer-events: none;
         }
@@ -434,12 +434,12 @@
         }
         .auth-input:focus {
             outline: none;
-            border-color: #0F4C5C;
+            border-color: var(--primary);
         }
         .eye-icon {
             position: absolute;
             right: 16px;
-            color: #9CA3AF;
+            color: var(--text-muted);
             cursor: pointer;
             font-size: 16px;
         }
@@ -448,7 +448,7 @@
             right: 0;
             top: 0;
             font-size: 11px;
-            color: #0F4C5C;
+            color: var(--primary);
             font-weight: 600;
             cursor: pointer;
         }
@@ -471,11 +471,11 @@
         }
         .auth-footer-text {
             font-size: 13px;
-            color: #6B7280;
+            color: var(--text-muted);
             margin-bottom: 24px;
         }
         .auth-footer-text span {
-            color: #0F4C5C;
+            color: var(--primary);
             font-weight: 700;
             cursor: pointer;
         }
@@ -484,7 +484,7 @@
             justify-content: center;
             gap: 16px;
             font-size: 10px;
-            color: #6B7280;
+            color: var(--text-muted);
         }
         .strength-bars {
             display: flex;
@@ -534,7 +534,7 @@
         .welcome-logo {
             font-size: 20px;
             font-weight: 700;
-            color: #0F4C5C;
+            color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -635,7 +635,7 @@
         }
         .welcome-login-link {
             font-size: 11px;
-            color: #4B5563;
+            color: var(--text-muted);
             margin-top: 16px;
             cursor: pointer;
             font-weight: 500;
