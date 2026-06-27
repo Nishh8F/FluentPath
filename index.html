@@ -2709,8 +2709,20 @@
                     setSpokenText("");
                     setClosestMatch(null);
                     setMatchScore(0);
+
+                    const fullLangMap = {
+                        english: 'en-US',
+                        russian: 'ru-RU',
+                        kelantan: 'ms-MY',
+                        terengganu: 'ms-MY',
+                        perak: 'ms-MY',
+                        selangor: 'ms-MY',
+                        utara: 'ms-MY'
+                    };
+                    const langCode = selectedLang ? (fullLangMap[selectedLang.id] || 'en-US') : 'en-US';
+
                     if (window.AppInventor) {
-                        window.AppInventor.setWebViewString("START_SPEECH_RECOGNITION");
+                        window.AppInventor.setWebViewString("START_SPEECH_RECOGNITION:" + langCode);
                     } else {
                         showToast("App Inventor not detected", "error");
                     }
