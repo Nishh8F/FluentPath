@@ -784,6 +784,11 @@
             };
 
             const speakText = (text, langId) => {
+                if (window.AppInventor) {
+                    window.AppInventor.setWebViewString("SPEAK_" + langId + ":" + text);
+                    return;
+                }
+
                 const shortLangMap = {
                     english: 'en',
                     russian: 'ru',
