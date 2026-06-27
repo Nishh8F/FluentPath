@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4] - 2026-06-27
+### Added
+- Added a "Pronunciation Practice" feature utilizing Google Speech-to-Text via MIT App Inventor's `SpeechRecognizer` component.
+- Implemented a Levenshtein distance algorithm on the frontend to calculate pronunciation accuracy by comparing spoken text to target vocabulary phrases.
+- Added a dynamic language code pass-through from the web app to MIT App Inventor (`START_SPEECH_RECOGNITION:lang_code`) to ensure the native speech recognizer listens for the correct language.
+
+### Changed
+- Updated application version to `v1.4` in `index.html`.
+
 ## [1.3] - 2026-06-19
 ### Added
 - Created `setup_db.php` script to easily automate database creation, schema setup, and clean seeding. (Removed after execution for production security).
