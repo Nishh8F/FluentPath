@@ -747,11 +747,11 @@
                 }, 3000);
             };
 
-            const speakText = (text, langId) => {
+            const fallbackToWebSpeech = (text, langId) => {
                 if (!window.speechSynthesis) return;
                 const synth = window.speechSynthesis;
                 const ut = new SpeechSynthesisUtterance(text);
-                const langMap = {
+                const fullLangMap = {
                     english: 'en-US',
                     russian: 'ru-RU',
                     kelantan: 'ms-MY',
@@ -760,7 +760,7 @@
                     selangor: 'ms-MY',
                     utara: 'ms-MY'
                 };
-                const targetLang = langMap[langId] || 'ms-MY';
+                const targetLang = fullLangMap[langId] || 'ms-MY';
                 ut.lang = targetLang;
                 
                 const voices = synth.getVoices();
@@ -781,6 +781,29 @@
                 
                 synth.cancel();
                 synth.speak(ut);
+            };
+
+            const speakText = (text, langId) => {
+                const shortLangMap = {
+                    english: 'en',
+                    russian: 'ru',
+                    kelantan: 'ms',
+                    terengganu: 'ms',
+                    perak: 'ms',
+                    selangor: 'ms',
+                    utara: 'ms'
+                };
+                const targetLang = shortLangMap[langId] || 'ms';
+                
+                try {
+                    const audio = new window.Audio(`https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${targetLang}&client=tw-ob`);
+                    audio.play().catch(e => {
+                        console.log("Audio fallback failed, trying Web Speech API", e);
+                        fallbackToWebSpeech(text, langId);
+                    });
+                } catch(e) {
+                    fallbackToWebSpeech(text, langId);
+                }
             };
 
             useEffect(() => {
@@ -1846,47 +1869,7 @@
                 const [gameOver, setGameOver] = useState(false);
                 const [shake, setShake] = useState(false);
 
-                const speakText = (text, langId) => {
-                    if (!window.speechSynthesis) return;
-                    const synth = window.speechSynthesis;
-                    const ut = new SpeechSynthesisUtterance(text);
-                    const langMap = {
-                        english: 'en-US',
-                        russian: 'ru-RU',
-                        kelantan: 'ms-MY',
-                        terengganu: 'ms-MY',
-                        perak: 'ms-MY',
-                        selangor: 'ms-MY',
-                        utara: 'ms-MY'
-                    };
-                    const targetLang = langMap[langId] || 'ms-MY';
-                    ut.lang = targetLang;
-                    
-                    const voices = synth.getVoices();
-                    if (voices.length > 0) {
-                        const preferredVoices = voices.filter(v => v.lang.startsWith(targetLang.split('-')[0]) && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium') || v.name.includes('Online')));
-                        if (preferredVoices.length > 0) {
-                            ut.voice = preferredVoices[0];
-                        } else {
-                            const matchingVoices = voices.filter(v => v.lang.startsWith(targetLang.split('-')[0]));
-                            if (matchingVoices.length > 0) {
-                                ut.voice = matchingVoices[0];
-                            }
-                        }
-                    }
-                    
-                    ut.rate = 0.9;
-                    ut.pitch = 1.0;
-                    
-                    synth.cancel();
-                    synth.speak(ut);
-                };
 
-                useEffect(() => {
-                    if (window.speechSynthesis) {
-                        window.speechSynthesis.getVoices();
-                    }
-                }, []);
 
                 useEffect(() => {
                     const fetchLessons = async () => {
