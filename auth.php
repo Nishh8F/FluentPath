@@ -532,7 +532,46 @@ try {
         $currentPic = $stmt->fetchColumn();
         $profilePicturePath = $currentPic;
 
-        if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+        if (!empty($_POST['profile_picture_base64']) || (!empty($_POST['profile_picture']) && (strpos($_POST['profile_picture'], 'data:image') === 0 || (preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $_POST['profile_picture']) && strlen($_POST['profile_picture']) > 100)))) {
+            $base64_string = !empty($_POST['profile_picture_base64']) ? $_POST['profile_picture_base64'] : $_POST['profile_picture'];
+            
+            $fileExtension = 'png';
+            $base64_data = $base64_string;
+            
+            if (strpos($base64_string, ',') !== false) {
+                $parts = explode(',', $base64_string);
+                $mime_part = $parts[0];
+                $base64_data = $parts[1];
+                if (strpos($mime_part, 'image/jpeg') !== false || strpos($mime_part, 'image/jpg') !== false) {
+                    $fileExtension = 'jpg';
+                } else if (strpos($mime_part, 'image/gif') !== false) {
+                    $fileExtension = 'gif';
+                }
+            }
+            
+            $uploadDir = 'uploads/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            $decoded_data = base64_decode($base64_data);
+            if ($decoded_data !== false) {
+                $newFileName = 'profile_' . $userId . '_' . time() . '.' . $fileExtension;
+                $targetFile = $uploadDir . $newFileName;
+                if (file_put_contents($targetFile, $decoded_data)) {
+                    $profilePicturePath = $targetFile;
+                    if ($currentPic && file_exists($currentPic) && $currentPic !== $targetFile) {
+                        unlink($currentPic);
+                    }
+                } else {
+                    echo json_encode(["error" => "Failed to save base64 image."]);
+                    exit;
+                }
+            } else {
+                echo json_encode(["error" => "Invalid base64 encoding."]);
+                exit;
+            }
+        } else if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
             $uploadDir = 'uploads/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
