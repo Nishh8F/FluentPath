@@ -2312,6 +2312,7 @@
                     birthday: currentUser?.birthday || '',
                 });
                 const [profilePicFile, setProfilePicFile] = useState(null);
+                const [profilePicBase64, setProfilePicBase64] = useState(null);
                 const [previewUrl, setPreviewUrl] = useState(currentUser?.profile_picture || null);
                 const [error, setError] = useState('');
                 const [isSaving, setIsSaving] = useState(false);
@@ -2355,6 +2356,12 @@
                         const file = e.target.files[0];
                         setProfilePicFile(file);
                         setPreviewUrl(URL.createObjectURL(file));
+
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                            setProfilePicBase64(reader.result);
+                        };
+                        reader.readAsDataURL(file);
                     }
                 };
 
@@ -2368,7 +2375,9 @@
                     data.append('name', formData.name);
                     data.append('bio', formData.bio);
                     data.append('birthday', formData.birthday);
-                    if (profilePicFile) {
+                    if (profilePicBase64) {
+                        data.append('profile_picture_base64', profilePicBase64);
+                    } else if (profilePicFile) {
                         data.append('profile_picture', profilePicFile);
                     }
 
