@@ -503,6 +503,12 @@ try {
     }
 
     if ($action === 'update_profile') {
+        if (empty($_POST) && empty($_FILES)) {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if ($input) {
+                $_POST = $input;
+            }
+        }
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(["error" => "Not authenticated."]);
             exit;
@@ -531,6 +537,13 @@ try {
         $stmt->execute([$userId]);
         $currentPic = $stmt->fetchColumn();
         $profilePicturePath = $currentPic;
+
+        if (!empty($_POST['profile_picture_base64'])) {
+            $_POST['profile_picture_base64'] = str_replace(' ', '+', $_POST['profile_picture_base64']);
+        }
+        if (!empty($_POST['profile_picture'])) {
+            $_POST['profile_picture'] = str_replace(' ', '+', $_POST['profile_picture']);
+        }
 
         if (!empty($_POST['profile_picture_base64']) || (!empty($_POST['profile_picture']) && (strpos($_POST['profile_picture'], 'data:image') === 0 || (preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $_POST['profile_picture']) && strlen($_POST['profile_picture']) > 100)))) {
             $base64_string = !empty($_POST['profile_picture_base64']) ? $_POST['profile_picture_base64'] : $_POST['profile_picture'];
