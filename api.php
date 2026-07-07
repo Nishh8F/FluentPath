@@ -13,8 +13,9 @@ try {
     exit;
 }
 
-// Get the language code from the app and sanitize it
+// Get the language code and topic from the app and sanitize them
 $lang = isset($_GET['lang']) ? htmlspecialchars(strip_tags(strtolower(trim($_GET['lang'])))) : '';
+$topic = isset($_GET['topic']) ? htmlspecialchars(strip_tags(trim($_GET['topic']))) : '';
 
 if (!$lang) {
     echo json_encode(["error" => "No language specified."]);
@@ -22,9 +23,16 @@ if (!$lang) {
 }
 
 // Fetch 10 random phrases for the selected language
-$query = "SELECT p.* FROM phrases p JOIN languages l ON p.language_id = l.id WHERE l.code = :lang_code ORDER BY RAND() LIMIT 10";
-$stmt = $conn->prepare($query);
-$stmt->bindParam(':lang_code', $lang);
+if ($topic) {
+    $query = "SELECT p.* FROM phrases p JOIN languages l ON p.language_id = l.id WHERE l.code = :lang_code AND p.topic = :topic ORDER BY RAND() LIMIT 10";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':lang_code', $lang);
+    $stmt->bindParam(':topic', $topic);
+} else {
+    $query = "SELECT p.* FROM phrases p JOIN languages l ON p.language_id = l.id WHERE l.code = :lang_code ORDER BY RAND() LIMIT 10";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':lang_code', $lang);
+}
 $stmt->execute();
 
 $lessons = [];
