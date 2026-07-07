@@ -1924,24 +1924,19 @@
                             </div>
                         </div>
 
-                        {/* Cultural Insight */}
+                        {/* Insight & About Us */}
                         <div
                             style={{ borderRadius: '16px', overflow: 'hidden', position: 'relative', height: '140px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer' }}
-                            onClick={() => showToast('Insight coming soon!', 'info')}
+                            onClick={() => setCurrentView('insight')}
                         >
-                            {insights.map((insight, index) => (
-                                <div key={index} style={{
-                                    position: 'absolute', inset: 0, transition: 'opacity 1s ease-in-out',
-                                    opacity: currentInsightIndex === index ? 1 : 0, pointerEvents: currentInsightIndex === index ? 'auto' : 'none'
-                                }}>
-                                    <img src={`uploads/${insight.image}`} alt={insight.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = 'uploads/wayang_kulit.png'; }} />
-                                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 100%)', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-                                        <div style={{ fontSize: '9px', fontWeight: '800', color: '#34D399', letterSpacing: '1px', marginBottom: '4px', textTransform: 'uppercase' }}>Cultural Insight</div>
-                                        <h3 style={{ margin: '0 0 4px 0', color: 'white', fontSize: '18px', fontWeight: '800' }}>{insight.title}</h3>
-                                        <p style={{ margin: 0, color: 'rgba(255,255,255,0.9)', fontSize: '11px', fontWeight: '500' }}>{insight.desc}</p>
-                                    </div>
+                            <div style={{ position: 'absolute', inset: 0, transition: 'opacity 1s ease-in-out', opacity: 1, pointerEvents: 'auto' }}>
+                                <img src={`uploads/wayang_kulit.png`} alt="Insights & About Us" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 100%)', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                                    <div style={{ fontSize: '9px', fontWeight: '800', color: '#34D399', letterSpacing: '1px', marginBottom: '4px', textTransform: 'uppercase' }}>Insights & About Us</div>
+                                    <h3 style={{ margin: '0 0 4px 0', color: 'white', fontSize: '18px', fontWeight: '800' }}>Project Overview</h3>
+                                    <p style={{ margin: 0, color: 'rgba(255,255,255,0.9)', fontSize: '11px', fontWeight: '500' }}>Explore the goals and functional requirements of FluentPath.</p>
                                 </div>
-                            ))}
+                            </div>
                         </div>
 
                         <div style={{ textAlign: 'center', marginTop: '32px', marginBottom: '16px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 'bold' }}>
@@ -2918,7 +2913,7 @@
                     {currentView === 'leaderboard' && <LeaderboardScreen />}
 
                     {/* Bottom Navigation */}
-                    {(currentView === 'dashboard' || currentView === 'select' || currentView === 'profile' || currentView === 'leaderboard' || currentView === 'insight') && (
+                    {(currentView === 'dashboard' || currentView === 'select' || currentView === 'profile' || currentView === 'leaderboard') && (
                         <div className="bottom-nav">
                             <div className={`nav-item ${currentView === 'dashboard' ? 'active' : ''}`} onClick={() => setCurrentView('dashboard')}>
                                 <i className="fa-solid fa-house"></i>
@@ -2927,10 +2922,6 @@
                             <div className={`nav-item ${currentView === 'select' ? 'active' : ''}`} onClick={() => setCurrentView('select')}>
                                 <i className="fa-solid fa-book"></i>
                                 <span>Learn</span>
-                            </div>
-                            <div className={`nav-item ${currentView === 'insight' ? 'active' : ''}`} onClick={() => setCurrentView('insight')}>
-                                <i className="fa-solid fa-lightbulb"></i>
-                                <span>Insight</span>
                             </div>
                             <div className={`nav-item ${currentView === 'leaderboard' ? 'active' : ''}`} onClick={() => setCurrentView('leaderboard')}>
                                 <i className="fa-solid fa-chart-simple"></i>
