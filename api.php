@@ -57,7 +57,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         "id" => $row['id'],
         "phrase" => $row['phrase'],
         "options" => $options,
-        "correctIndex" => $correctIndex
+        "correctIndex" => $correctIndex,
+        "example" => $row['example'] ?? null
     ];
 }
 
