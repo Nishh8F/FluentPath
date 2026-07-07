@@ -909,7 +909,7 @@
                                 setVocabList(data.map(item => ({
                                     word: item.phrase,
                                     meaning: item.options[item.correctIndex],
-                                    example: `Mastering this phrase will help you in ${topic.toLowerCase()}.`
+                                    example: item.example || `Mastering this phrase will help you in ${topic.toLowerCase()}.`
                                 })));
                             }
                         } catch (error) {
