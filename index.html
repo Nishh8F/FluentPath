@@ -2303,6 +2303,67 @@
                 );
             };
 
+            const InsightScreen = () => {
+                return (
+                    <div className="screen" style={{ paddingBottom: '80px', overflowY: 'auto' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
+                            <h2 style={{ fontSize: '24px', margin: 0, color: 'var(--text-light)' }}>Insights & About</h2>
+                        </div>
+                        
+                        <div style={{ background: 'var(--card-bg)', borderRadius: '16px', padding: '24px', marginBottom: '24px', border: '1px solid var(--border-color)' }}>
+                            <h3 style={{ marginTop: 0, color: '#FCD34D', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <i className="fa-solid fa-circle-info"></i> About FluentPath
+                            </h3>
+                            <p style={{ lineHeight: '1.6', color: 'var(--text-muted)' }}>
+                                FluentPath is an online language learning application designed to combine the learning of regional Malaysian dialects and major national languages by highlighting the differences between various regions and languages.
+                            </p>
+                            <p style={{ lineHeight: '1.6', color: 'var(--text-muted)' }}>
+                                The main purpose is to bridge the existing gap in language learning applications that typically include only national languages and lack regional dialects. FluentPath currently supports 5 local Malay dialects (Kelantan, Terengganu, Perak, Selangor/KL, Utara) and two international languages (English and Russian).
+                            </p>
+                            <p style={{ lineHeight: '1.6', color: 'var(--text-muted)' }}>
+                                Our mission is to preserve local heritage, protect cultural assimilation, and help tourists gain a better understanding of local dialects through fun, gamified elements like streaks, experience points (XP), and badges.
+                            </p>
+                        </div>
+
+                        <div style={{ background: 'var(--card-bg)', borderRadius: '16px', padding: '24px', marginBottom: '24px', border: '1px solid var(--border-color)' }}>
+                            <h3 style={{ marginTop: 0, color: '#FCD34D', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <i className="fa-solid fa-list-check"></i> Functional Requirements
+                            </h3>
+                            
+                            <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--border-color)' }}>
+                                <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-light)' }}>1. Login And Registration</h4>
+                                <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', color: '#FCD34D' }}>User: Guest, Learner</span>
+                                <p style={{ margin: '8px 0 0 0', color: 'var(--text-muted)', fontSize: '14px' }}>Allow users to create accounts and login to their accounts.</p>
+                            </div>
+
+                            <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--border-color)' }}>
+                                <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-light)' }}>2. Progress Saving</h4>
+                                <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', color: '#FCD34D' }}>User: Learner</span>
+                                <p style={{ margin: '8px 0 0 0', color: 'var(--text-muted)', fontSize: '14px' }}>User's data will be updated based on the progress that has been done by user and also calculate the XP gained from the lessons.</p>
+                            </div>
+
+                            <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--border-color)' }}>
+                                <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-light)' }}>3. Language Selector</h4>
+                                <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', color: '#FCD34D' }}>User: Learner</span>
+                                <p style={{ margin: '8px 0 0 0', color: 'var(--text-muted)', fontSize: '14px' }}>User will be shown the available dialect and language that can be selected and each question will be shuffled accordingly to each user.</p>
+                            </div>
+
+                            <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--border-color)' }}>
+                                <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-light)' }}>4. Profile Customization</h4>
+                                <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', color: '#FCD34D' }}>User: Learner</span>
+                                <p style={{ margin: '8px 0 0 0', color: 'var(--text-muted)', fontSize: '14px' }}>User able to edit their name, bio, custom profile picture accordingly and will be saved on database.</p>
+                            </div>
+
+                            <div style={{ marginBottom: '0' }}>
+                                <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-light)' }}>5. Global Leaderboard</h4>
+                                <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', color: '#FCD34D' }}>User: Learner</span>
+                                <p style={{ margin: '8px 0 0 0', color: 'var(--text-muted)', fontSize: '14px' }}>User able to see the ranking of other user based on progress and XP gained by the users and will be automatically updated for each progress.</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
             const ProfileScreen = () => {
                 const [isEditing, setIsEditing] = useState(false);
                 const [formData, setFormData] = useState({
@@ -2852,11 +2913,12 @@
                     {currentView === 'vocab' && <VocabScreen topic={selectedTopic} />}
                     {currentView === 'pronunciation' && <PronunciationScreen />}
                     {currentView === 'profile' && <ProfileScreen />}
+                    {currentView === 'insight' && <InsightScreen />}
                     {currentView === 'reward' && <RewardScreen />}
                     {currentView === 'leaderboard' && <LeaderboardScreen />}
 
                     {/* Bottom Navigation */}
-                    {(currentView === 'dashboard' || currentView === 'select' || currentView === 'profile' || currentView === 'leaderboard') && (
+                    {(currentView === 'dashboard' || currentView === 'select' || currentView === 'profile' || currentView === 'leaderboard' || currentView === 'insight') && (
                         <div className="bottom-nav">
                             <div className={`nav-item ${currentView === 'dashboard' ? 'active' : ''}`} onClick={() => setCurrentView('dashboard')}>
                                 <i className="fa-solid fa-house"></i>
@@ -2866,9 +2928,13 @@
                                 <i className="fa-solid fa-book"></i>
                                 <span>Learn</span>
                             </div>
+                            <div className={`nav-item ${currentView === 'insight' ? 'active' : ''}`} onClick={() => setCurrentView('insight')}>
+                                <i className="fa-solid fa-lightbulb"></i>
+                                <span>Insight</span>
+                            </div>
                             <div className={`nav-item ${currentView === 'leaderboard' ? 'active' : ''}`} onClick={() => setCurrentView('leaderboard')}>
                                 <i className="fa-solid fa-chart-simple"></i>
-                                <span>Leaderboard</span>
+                                <span>Ranking</span>
                             </div>
                             <div className={`nav-item ${currentView === 'profile' ? 'active' : ''}`} onClick={() => setCurrentView('profile')}>
                                 <i className="fa-regular fa-user"></i>
